@@ -23,7 +23,10 @@ public class Tasktype {
 
     @OneToMany(mappedBy = "tasktype")
     @JsonIgnore
-    Set<TasktypeAllowance> tasktypeAllowances;
+    private Set<TasktypeAllowance> tasktypeAllowances;
+
+    @OneToMany(mappedBy = "tasktype")
+    private Set<Task> tasks;
 
     public Tasktype() {
     }
@@ -33,11 +36,12 @@ public class Tasktype {
         this.cadence = cadence;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, Set<TasktypeAllowance> tasktypeAllowances) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
         this.tasktypeAllowances = tasktypeAllowances;
+        this.tasks = tasks;
     }
 
     public Long getId() {
@@ -72,5 +76,13 @@ public class Tasktype {
 
     public void setTasktypeAllowances(Set<TasktypeAllowance> tasktypeAllowances) {
         this.tasktypeAllowances = tasktypeAllowances;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 }

@@ -17,7 +17,10 @@ public class Allowance {
     private Long userId;
 
     @OneToMany(mappedBy = "allowance")
-    Set<TasktypeAllowance> tasktypeAllowances;
+    private Set<TasktypeAllowance> tasktypeAllowances;
+
+    @OneToMany(mappedBy = "allowance")
+    private Set<TaskAllowance> taskAllowances;
 
     public Allowance() {
     }
@@ -33,11 +36,12 @@ public class Allowance {
         this.userId = userId;
     }
 
-    public Allowance(Long id, Double balance, Long userId, Set<TasktypeAllowance> tasktypeAllowances) {
+    public Allowance(Long id, Double balance, Long userId, Set<TasktypeAllowance> tasktypeAllowances, Set<TaskAllowance> taskAllowances) {
         this.id = id;
         this.balance = balance;
         this.userId = userId;
         this.tasktypeAllowances = tasktypeAllowances;
+        this.taskAllowances = taskAllowances;
     }
 
     public Long getId() {
@@ -70,5 +74,13 @@ public class Allowance {
 
     public void setTasktypeAllowances(Set<TasktypeAllowance> tasktypeAllowances) {
         this.tasktypeAllowances = tasktypeAllowances;
+    }
+
+    public Set<TaskAllowance> getTaskAllowances() {
+        return taskAllowances;
+    }
+
+    public void setTaskAllowances(Set<TaskAllowance> taskAllowances) {
+        this.taskAllowances = taskAllowances;
     }
 }
