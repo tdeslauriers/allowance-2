@@ -1,0 +1,24 @@
+micronaut:
+  application:
+    name: allowanceR2
+  server:
+    port: 8083
+jpa:
+  default:
+    entity-scan:
+      packages:
+        - 'world.deslauriers.domain'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        connection:
+          db-type: mariadb
+          url: ${ALLOWANCE_JDBC_URL}
+          username: ${ALLOWANCE_JDBC_USER}
+          password: ${ALLOWANCE_JDBC_PASSWORD}
+    reactive: true
+netty:
+  default:
+    allocator:
+      max-order: 3

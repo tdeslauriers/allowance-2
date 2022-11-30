@@ -1,0 +1,66 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.micronaut.application") version "3.6.3"
+    id("io.micronaut.test-resources") version "3.6.3"
+}
+
+version = "0.1"
+group = "world.deslauriers"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+
+    implementation("io.dekorate:kubernetes-annotations")
+    annotationProcessor("io.micronaut.data:micronaut-data-processor")
+    annotationProcessor("io.micronaut:micronaut-http-validation")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.data:micronaut-data-hibernate-reactive")
+    implementation("io.micronaut.reactor:micronaut-reactor")
+    implementation("io.micronaut.reactor:micronaut-reactor-http-client")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.vertx:vertx-mysql-client")
+    implementation("jakarta.annotation:jakarta.annotation-api")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    testResourcesService("mysql:mysql-connector-java")
+    compileOnly("org.graalvm.nativeimage:svm")
+
+    implementation("io.micronaut:micronaut-validation")
+}
+
+
+application {
+    mainClass.set("world.deslauriers.Application")
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("world.deslauriers.*")
+    }
+    testResources {
+        additionalModules.add("hibernate-reactive-mariadb")
+    }
+}
+
+test {
+    testLogging{
+
+        // Make sure output from
+        // standard out or error is shown
+        // in Gradle output.
+        events 'standard_out', 'standard_error'
+    }
+}
+
