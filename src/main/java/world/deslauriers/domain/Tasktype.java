@@ -25,6 +25,7 @@ public class Tasktype {
     @JsonIgnore
     private Set<TasktypeAllowance> tasktypeAllowances;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tasktype")
     private Set<Task> tasks;
 

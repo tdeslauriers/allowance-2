@@ -1,38 +1,46 @@
 package world.deslauriers.controller;
 
+import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
-import world.deslauriers.repository.TasktypeRepository;
+import world.deslauriers.service.TasktypeService;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @Controller("/tasktypes")
 public class TasktypeController {
 
-    protected final TasktypeRepository tasktypeRepository;
+    protected final TasktypeService tasktypeService;
 
-    public TasktypeController(TasktypeRepository tasktypeRepository) {
-        this.tasktypeRepository = tasktypeRepository;
+    public TasktypeController(TasktypeService tasktypeService) {
+        this.tasktypeService = tasktypeService;
     }
 
     @Get
     Flux<Tasktype> getAll(){
-        return tasktypeRepository.findAll();
+        return tasktypeService.findAll();
     }
 
     @Post
     Mono<HttpResponse<Tasktype>> save(@Body Tasktype cmd){
-        return tasktypeRepository
+        return tasktypeService
                 .save(cmd)
                 .map(tasktype -> HttpResponse.created(tasktype)
                         .headers(headers -> headers.location(location(tasktype.getId()))));
 
+    }
+
+    @Put
+    public Mono<HttpResponse<Tasktype>> update(@Body @Valid Tasktype cmd){
+        return tasktypeService
+                .update(cmd)
+                .map(tasktype -> HttpResponse
+                        .<Tasktype>noContent()
+                        .header(HttpHeaders.LOCATION, location(cmd.getId()).getPath()));
     }
 
     protected URI location(Long id){
