@@ -17,9 +17,9 @@ public class Scheduler {
     }
 
     @Scheduled(cron = "0 0 3 * * *")
-    Disposable dailyTasks(){
+    void dailyTasks(){
 
-        log.warn("Creating daily tasks.");
-        return taskService.createDailyTasks();
+        log.info("Creating daily tasks.");
+        taskService.createDailyTasks().subscribe();
     }
 }

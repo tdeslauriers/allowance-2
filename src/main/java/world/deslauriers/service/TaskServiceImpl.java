@@ -1,7 +1,7 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
-import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
 import world.deslauriers.domain.Task;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.repository.TaskAllowanceRepository;
@@ -25,12 +25,11 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public Disposable createDailyTasks(){
+    public Flux<TaskAllowance> createDailyTasks(){
 
         return allowanceService.findAll()
                 .flatMap(allowance -> tasktypeService.findDailyTasktypes(allowance.getId())
                         .flatMap(tasktype -> taskRepository.save(new Task(LocalDate.now(), false, false, tasktype)))
-                        .flatMap(task -> taskAllowanceRepository.save(new TaskAllowance(task, allowance))))
-                .subscribe();
+                        .flatMap(task -> taskAllowanceRepository.save(new TaskAllowance(task, allowance))));
     }
 }
