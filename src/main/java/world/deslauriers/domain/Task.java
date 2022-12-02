@@ -1,5 +1,6 @@
 package world.deslauriers.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.serde.annotation.Serdeable;
 
 import javax.persistence.*;
@@ -21,6 +22,7 @@ public class Task {
     private Tasktype tasktype;
 
     @OneToMany(mappedBy = "task")
+    @JsonIgnore
     private Set<TaskAllowance> taskAllowances;
 
     public Task() {
@@ -30,6 +32,13 @@ public class Task {
         this.date = date;
         this.isComplete = isComplete;
         this.isQuality = isQuality;
+    }
+
+    public Task(LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype) {
+        this.date = date;
+        this.isComplete = isComplete;
+        this.isQuality = isQuality;
+        this.tasktype = tasktype;
     }
 
     public Task(Long id, LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {

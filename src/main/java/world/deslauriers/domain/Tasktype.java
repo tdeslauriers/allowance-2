@@ -37,6 +37,12 @@ public class Tasktype {
         this.cadence = cadence;
     }
 
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence) {
+        this.id = id;
+        this.name = name;
+        this.cadence = cadence;
+    }
+
     public Tasktype(Long id, @NonNull String name, @NonNull String cadence, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
         this.id = id;
         this.name = name;

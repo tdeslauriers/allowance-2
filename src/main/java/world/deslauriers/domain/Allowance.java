@@ -20,6 +20,7 @@ public class Allowance {
     private Set<TasktypeAllowance> tasktypeAllowances;
 
     @OneToMany(mappedBy = "allowance")
+    @JsonIgnore
     private Set<TaskAllowance> taskAllowances;
 
     public Allowance() {

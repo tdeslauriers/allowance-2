@@ -1,4 +1,4 @@
-package world.deslauriers.service;
+package world.deslauriers.service.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 

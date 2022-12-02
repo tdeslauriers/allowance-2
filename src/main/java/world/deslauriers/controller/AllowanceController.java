@@ -8,27 +8,33 @@ import io.micronaut.http.annotation.Post;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
-import world.deslauriers.repository.AllowanceRepository;
+import world.deslauriers.service.AllowanceService;
+import world.deslauriers.service.dto.TaskDto;
 
 import java.net.URI;
 
 @Controller("/allowances")
 public class AllowanceController {
 
-    protected final AllowanceRepository allowanceRepository;
+    protected final AllowanceService allowanceService;
 
-    public AllowanceController(AllowanceRepository allowanceRepository) {
-        this.allowanceRepository = allowanceRepository;
+    public AllowanceController(AllowanceService allowanceService) {
+        this.allowanceService = allowanceService;
     }
 
     @Get
     Flux<Allowance> getAll(){
-        return allowanceRepository.findAll();
+        return allowanceService.findAll();
+    }
+
+    @Get("/{id}")
+    Mono<Allowance> getTasksByAllowanceId(Long id){
+        return allowanceService.findTasktypesByAllowanceId(id);
     }
 
     @Post
     Mono<HttpResponse<Allowance>> save(@Body Allowance cmd){
-        return allowanceRepository
+        return allowanceService
                 .save(cmd)
                 .map(allowance -> HttpResponse.created(allowance)
                         .headers(headers -> headers.location(location(allowance.getId()))));

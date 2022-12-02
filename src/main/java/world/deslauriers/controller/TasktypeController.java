@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.service.TasktypeService;
+import world.deslauriers.service.dto.TaskDto;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -25,6 +26,11 @@ public class TasktypeController {
         return tasktypeService.findAll();
     }
 
+    @Get("/{id}")
+    Flux<Tasktype> getById(Long id){
+        return tasktypeService.findDailyTasktypes(id);
+    }
+
     @Post
     Mono<HttpResponse<Tasktype>> save(@Body Tasktype cmd){
         return tasktypeService
@@ -35,12 +41,17 @@ public class TasktypeController {
     }
 
     @Put
-    public Mono<HttpResponse<Tasktype>> update(@Body @Valid Tasktype cmd){
+    Mono<HttpResponse<Tasktype>> update(@Body @Valid Tasktype cmd){
         return tasktypeService
                 .update(cmd)
                 .map(tasktype -> HttpResponse
                         .<Tasktype>noContent()
                         .header(HttpHeaders.LOCATION, location(cmd.getId()).getPath()));
+    }
+
+    @Get("/daily/{allowanceId}")
+    Flux<TaskDto> getDailyTasks(Long allowanceId){
+        return tasktypeService.getDailyTasks(allowanceId);
     }
 
     protected URI location(Long id){
