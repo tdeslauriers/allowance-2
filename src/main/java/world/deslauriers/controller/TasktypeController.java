@@ -6,7 +6,9 @@ import io.micronaut.http.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
+import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.service.TasktypeService;
+import world.deslauriers.service.dto.AssignCmd;
 import world.deslauriers.service.dto.TaskDto;
 
 import javax.validation.Valid;
@@ -46,7 +48,16 @@ public class TasktypeController {
                 .update(cmd)
                 .map(tasktype -> HttpResponse
                         .<Tasktype>noContent()
-                        .header(HttpHeaders.LOCATION, location(cmd.getId()).getPath()));
+                        .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
+    }
+
+    @Post("/assign")
+    Mono<HttpResponse<TasktypeAllowance>> assignTask(@Body @Valid AssignCmd cmd){
+        return tasktypeService
+                .assign(cmd)
+                .map(tasktypeAllowance -> HttpResponse
+                        .noContent());
+
     }
 
     @Get("/daily/{allowanceId}")

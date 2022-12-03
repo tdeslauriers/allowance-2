@@ -41,6 +41,14 @@ public class Task {
         this.tasktype = tasktype;
     }
 
+    public Task(Long id, LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype) {
+        this.id = id;
+        this.date = date;
+        this.isComplete = isComplete;
+        this.isQuality = isQuality;
+        this.tasktype = tasktype;
+    }
+
     public Task(Long id, LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {
         this.id = id;
         this.date = date;

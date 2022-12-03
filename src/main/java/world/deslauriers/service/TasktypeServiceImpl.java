@@ -5,7 +5,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Cadence;
 import world.deslauriers.domain.Tasktype;
+import world.deslauriers.domain.TasktypeAllowance;
+import world.deslauriers.repository.TasktypeAllowanceRepository;
 import world.deslauriers.repository.TasktypeRepository;
+import world.deslauriers.service.dto.AssignCmd;
 import world.deslauriers.service.dto.TaskDto;
 
 import javax.validation.ValidationException;
@@ -15,9 +18,13 @@ import java.util.Objects;
 public class TasktypeServiceImpl implements TasktypeService {
 
     private final TasktypeRepository tasktypeRepository;
+    private final AllowanceService allowanceService;
+    private final TasktypeAllowanceRepository tasktypeAllowanceRepository;
 
-    public TasktypeServiceImpl(TasktypeRepository tasktypeRepository) {
+    public TasktypeServiceImpl(TasktypeRepository tasktypeRepository, AllowanceService allowanceService, TasktypeAllowanceRepository tasktypeAllowanceRepository) {
         this.tasktypeRepository = tasktypeRepository;
+        this.allowanceService = allowanceService;
+        this.tasktypeAllowanceRepository = tasktypeAllowanceRepository;
     }
 
     @Override
@@ -56,6 +63,15 @@ public class TasktypeServiceImpl implements TasktypeService {
     @Override
     public Flux<TaskDto> getDailyTasks(Long allowanceId) {
         return tasktypeRepository.findToDoList(allowanceId);
+    }
+
+    @Override
+    public Mono<TasktypeAllowance> assign(AssignCmd cmd) {
+
+        // add error handling for if association already exists.
+        return tasktypeRepository.findById(cmd.tasktypeId())
+                .zipWith(allowanceService.findById(cmd.allowanceId()))
+                .flatMap(tta -> tasktypeAllowanceRepository.save(new TasktypeAllowance(tta.getT1(), tta.getT2())));
     }
 
     private Boolean isValidCadence(String cadence){

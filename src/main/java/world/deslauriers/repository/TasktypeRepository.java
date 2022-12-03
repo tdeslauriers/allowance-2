@@ -22,9 +22,7 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
               tt.cadence,
               t.date,
               t.isComplete,
-              t.isQuality,
-              tta.id,
-              a.id)
+              t.isQuality)
             FROM Task t
               LEFT JOIN t.tasktype tt
               LEFT JOIN tt.tasktypeAllowances tta

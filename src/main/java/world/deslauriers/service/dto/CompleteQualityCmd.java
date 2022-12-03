@@ -4,8 +4,8 @@ import io.micronaut.core.annotation.NonNull;
 import io.micronaut.serde.annotation.Serdeable;
 
 @Serdeable
-public record AssignCmd(
-        @NonNull Long allowanceId,
-        @NonNull Long tasktypeId
+public record CompleteQualityCmd(
+        @NonNull Long taskId,
+        @NonNull Boolean status
 ) {
 }

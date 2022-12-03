@@ -31,4 +31,9 @@ public class AllowanceServiceImpl implements AllowanceService{
     public Mono<Allowance> findTasktypesByAllowanceId(Long id){
         return allowanceRepository.findById(id);
     }
+
+    @Override
+    public Mono<Allowance> findById(Long id) {
+        return allowanceRepository.findById(id);
+    }
 }

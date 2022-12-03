@@ -12,8 +12,6 @@ public record TaskDto(
         String cadence,
         @JsonFormat(pattern="yyyy-MM-dd") LocalDate date,
         Boolean isComplete,
-        Boolean isQuality,
-        Long ttaId,
-        Long aid
+        Boolean isQuality
 ) {
 }

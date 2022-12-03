@@ -10,4 +10,6 @@ public interface AllowanceService {
     Mono<Allowance> save(Allowance cmd);
 
     Mono<Allowance> findTasktypesByAllowanceId(Long id);
+
+    Mono<Allowance> findById(Long allowanceId);
 }
