@@ -3,6 +3,13 @@ micronaut:
     name: allowanceR2
   server:
     port: 8083
+  security:
+    token:
+      jwt:
+        signatures:
+          secret:
+            validation:
+              secret: ${JWT_GENERATOR_SIGNATURE_SECRET}
 jpa:
   default:
     entity-scan:

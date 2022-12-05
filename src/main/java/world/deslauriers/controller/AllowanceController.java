@@ -5,13 +5,17 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 import world.deslauriers.service.AllowanceService;
 
+import javax.validation.Valid;
 import java.net.URI;
 
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/allowances")
 public class AllowanceController {
 
@@ -25,12 +29,13 @@ public class AllowanceController {
     Flux<Allowance> getAll(){
         return allowanceService.findAll();
     }
-
+    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
     @Get("/{id}")
     Mono<Allowance> getTasksByAllowanceId(Long id){
         return allowanceService.findTasktypesByAllowanceId(id);
     }
 
+    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
     @Post
     Mono<HttpResponse<Allowance>> save(@Body Allowance cmd){
         return allowanceService

@@ -13,16 +13,16 @@ public class TasktypeAllowance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Nullable
     @ManyToOne
-    Tasktype tasktype;
+    private Tasktype tasktype;
 
     @Nullable
     @ManyToOne
     @JsonIgnore
-    Allowance allowance;
+    private Allowance allowance;
 
     public TasktypeAllowance() {
     }

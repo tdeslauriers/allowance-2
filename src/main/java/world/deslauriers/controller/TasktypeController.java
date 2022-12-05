@@ -3,6 +3,8 @@ package world.deslauriers.controller;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
+import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.rules.SecurityRule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
@@ -14,6 +16,7 @@ import world.deslauriers.service.dto.TaskDto;
 import javax.validation.Valid;
 import java.net.URI;
 
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/tasktypes")
 public class TasktypeController {
 
@@ -23,16 +26,19 @@ public class TasktypeController {
         this.tasktypeService = tasktypeService;
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Get
     Flux<Tasktype> getAll(){
         return tasktypeService.findAll();
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Get("/{id}")
     Flux<Tasktype> getById(Long id){
         return tasktypeService.findDailyTasktypes(id);
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Post
     Mono<HttpResponse<Tasktype>> save(@Body Tasktype cmd){
         return tasktypeService
@@ -42,6 +48,7 @@ public class TasktypeController {
 
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Put
     Mono<HttpResponse<Tasktype>> update(@Body @Valid Tasktype cmd){
         return tasktypeService
@@ -51,6 +58,7 @@ public class TasktypeController {
                         .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Post("/assign")
     Mono<HttpResponse<TasktypeAllowance>> assignTask(@Body @Valid AssignCmd cmd){
         return tasktypeService
@@ -60,6 +68,7 @@ public class TasktypeController {
 
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Get("/daily/{allowanceId}")
     Flux<TaskDto> getDailyTasks(Long allowanceId){
         return tasktypeService.getDailyTasks(allowanceId);
