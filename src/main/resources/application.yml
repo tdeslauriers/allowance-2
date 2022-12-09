@@ -3,6 +3,8 @@ micronaut:
     name: allowanceR2
   server:
     port: 8083
+    cors:
+      enabled: true
   security:
     token:
       jwt:

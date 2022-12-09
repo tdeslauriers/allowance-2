@@ -20,6 +20,7 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
                 t.id,
                 tt.name,
                 tt.cadence,
+                tt.category,
                 t.date,
                 t.isComplete,
                 t.isQuality)

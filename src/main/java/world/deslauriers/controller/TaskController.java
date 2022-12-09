@@ -43,7 +43,7 @@ public class TaskController {
                         .header(HttpHeaders.LOCATION, location(task.getId()).getPath()));
     }
 
-    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
+    @Secured({"ALLOWANCE_ADMIN"})
     @Put("/quality")
     Mono<HttpResponse> updateIsCQuality(@Body @Valid CompleteQualityCmd cmd){
         return taskService

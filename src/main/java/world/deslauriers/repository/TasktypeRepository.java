@@ -20,6 +20,7 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
               t.id,
               tt.name,
               tt.cadence,
+              tt.category,
               t.date,
               t.isComplete,
               t.isQuality)
@@ -43,7 +44,8 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
             SELECT new world.deslauriers.domain.Tasktype(
               tt.id,
               tt.name,
-              tt.cadence)
+              tt.cadence,
+              tt.category)
             FROM Tasktype tt
               LEFT JOIN tt.tasktypeAllowances tta 
               LEFT JOIN tta.allowance a 

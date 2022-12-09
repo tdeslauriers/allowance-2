@@ -4,6 +4,7 @@ import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Cadence;
+import world.deslauriers.domain.Category;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.repository.TasktypeAllowanceRepository;
@@ -48,7 +49,7 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCadence(cmd.getCadence())){
             throw new ValidationException("Incorrect cadence provided.");
         }
-        return tasktypeRepository.save(new Tasktype(cmd.getName(), cmd.getCadence()));
+        return tasktypeRepository.save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory()));
     }
 
     @Override
@@ -57,7 +58,11 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCadence(cmd.getCadence())){
             throw new ValidationException("Incorrect cadence provided.");
         }
-        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence()));
+
+        if (!isValidCategory(cmd.getCategory())){
+            throw new ValidationException("Incorrect category provided.");
+        }
+        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory()));
     }
 
     @Override
@@ -78,6 +83,16 @@ public class TasktypeServiceImpl implements TasktypeService {
 
         for (var c: Cadence.values()){
             if (Objects.equals(cadence.toUpperCase(), c.toString())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Boolean isValidCategory(String category){
+
+        for (var c: Category.values()){
+            if (Objects.equals(category.toUpperCase(), c.toString())){
                 return true;
             }
         }

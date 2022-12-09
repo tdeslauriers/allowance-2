@@ -10,6 +10,7 @@ public record TaskDto(
         Long id,
         String task,
         String cadence,
+        String category,
         @JsonFormat(pattern="yyyy-MM-dd") LocalDate date,
         Boolean isComplete,
         Boolean isQuality

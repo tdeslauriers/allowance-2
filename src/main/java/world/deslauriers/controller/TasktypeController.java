@@ -68,7 +68,7 @@ public class TasktypeController {
 
     }
 
-    @Secured({"ALLOWANCE_ADMIN"})
+    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
     @Get("/daily/{allowanceId}")
     Flux<TaskDto> getDailyTasks(Long allowanceId){
         return tasktypeService.getDailyTasks(allowanceId);
