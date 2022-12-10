@@ -11,6 +11,8 @@ import world.deslauriers.service.dto.TaskDto;
 @Repository
 public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long> {
 
+    @Query("FROM Tasktype tt WHERE tt.isArchived = false")
+    Flux<Tasktype> findAllActive();
     Mono<Tasktype> save(Tasktype tasktype);
 
     // using hibernate sql syntax

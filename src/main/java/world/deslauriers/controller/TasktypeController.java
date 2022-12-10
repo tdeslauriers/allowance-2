@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.service.TasktypeService;
+import world.deslauriers.service.dto.ArchiveCmd;
 import world.deslauriers.service.dto.AssignCmd;
 import world.deslauriers.service.dto.TaskDto;
 
@@ -56,6 +57,19 @@ public class TasktypeController {
                 .map(tasktype -> HttpResponse
                         .<Tasktype>noContent()
                         .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
+    }
+
+    @Secured({"ALLOWANCE_ADMIN"})
+    @Put("/archive")
+    Mono<HttpResponse<Tasktype>> archive(@Body ArchiveCmd cmd){
+        return tasktypeService
+                .findById(cmd.archiveId())
+                .flatMap(tasktype -> {
+                    tasktype.setArchived(true);
+                    return tasktypeService.update(tasktype);
+                })
+                .map(tasktype -> HttpResponse
+                        .noContent());
     }
 
     @Secured({"ALLOWANCE_ADMIN"})

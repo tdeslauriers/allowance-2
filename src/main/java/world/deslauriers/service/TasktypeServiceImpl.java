@@ -30,7 +30,7 @@ public class TasktypeServiceImpl implements TasktypeService {
 
     @Override
     public Flux<Tasktype> findAll() {
-        return tasktypeRepository.findAll();
+        return tasktypeRepository.findAllActive();
     }
 
     @Override

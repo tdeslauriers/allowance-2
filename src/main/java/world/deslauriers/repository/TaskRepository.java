@@ -10,6 +10,7 @@ import world.deslauriers.service.dto.TaskDto;
 
 @Repository
 public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
+
     Mono<Task> save(Task task);
 
     @Join(value = "tasktype", type = Join.Type.LEFT_FETCH)
