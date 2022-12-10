@@ -62,7 +62,7 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCategory(cmd.getCategory())){
             throw new ValidationException("Incorrect category provided.");
         }
-        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory()));
+        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()));
     }
 
     @Override

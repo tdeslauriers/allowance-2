@@ -48,11 +48,12 @@ public class Tasktype {
         this.category = category;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, Boolean isArchived) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
         this.category = category;
+        this.isArchived = isArchived;
     }
 
     public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
