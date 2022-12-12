@@ -27,11 +27,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
-    @Get("/{id}")
-    Mono<TaskDto> getById(Long id){
-        return taskService.getById(id);
-    }
+//    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
+//    @Get("/{id}")
+//    Mono<TaskDto> getById(Long id){
+//        return taskService.getById(id);
+//    }
 
     @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
     @Put("/complete")

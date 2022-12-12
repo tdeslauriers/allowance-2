@@ -1,10 +1,10 @@
 micronaut:
   application:
-    name: allowanceR2
+    name: allowance
   server:
     port: 8083
-    cors:
-      enabled: true
+#    cors:
+#      enabled: true
   security:
     token:
       jwt:
@@ -12,6 +12,8 @@ micronaut:
           secret:
             validation:
               secret: ${JWT_GENERATOR_SIGNATURE_SECRET}
+
+---
 jpa:
   default:
     entity-scan:

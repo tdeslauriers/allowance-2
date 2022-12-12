@@ -13,6 +13,10 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
 
     @Query("FROM Tasktype tt WHERE tt.isArchived = false")
     Flux<Tasktype> findAllActive();
+
+    @Query("FROM Tasktype tt WHERE tt.id = :id AND tt.isArchived = false")
+    Mono<Tasktype> findById(Long id);
+
     Mono<Tasktype> save(Tasktype tasktype);
 
     // using hibernate sql syntax
@@ -42,6 +46,7 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
               """)
     Flux<TaskDto> findToDoList(Long allowanceId);
 
+    // needed for daily task creation.
     @Query(value = """
             SELECT new world.deslauriers.domain.Tasktype(
               tt.id,
@@ -49,8 +54,8 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
               tt.cadence,
               tt.category)
             FROM Tasktype tt
-              LEFT JOIN tt.tasktypeAllowances tta 
-              LEFT JOIN tta.allowance a 
+              LEFT JOIN tt.tasktypeAllowances tta
+              LEFT JOIN tta.allowance a
             WHERE
                 tt.cadence = 'daily'
               AND

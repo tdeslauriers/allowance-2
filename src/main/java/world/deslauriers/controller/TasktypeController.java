@@ -33,10 +33,16 @@ public class TasktypeController {
         return tasktypeService.findAll();
     }
 
+//    @Secured({"ALLOWANCE_ADMIN"})
+//    @Get("/{id}")
+//    Flux<Tasktype> getById(Long id){
+//        return tasktypeService.findDailyTasktypes(id);
+//    }
+
     @Secured({"ALLOWANCE_ADMIN"})
     @Get("/{id}")
-    Flux<Tasktype> getById(Long id){
-        return tasktypeService.findDailyTasktypes(id);
+    Mono<Tasktype> getById(Long id){
+        return tasktypeService.getById(id);
     }
 
     @Secured({"ALLOWANCE_ADMIN"})

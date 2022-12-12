@@ -15,4 +15,6 @@ public record TaskDto(
         Boolean isComplete,
         Boolean isQuality
 ) {
+
+
 }

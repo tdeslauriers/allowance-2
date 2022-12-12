@@ -11,7 +11,7 @@ import world.deslauriers.service.dto.TaskDto;
 public interface TasktypeService {
     Flux<Tasktype> findAll();
 
-    Flux<Tasktype> findDailyTasktypes(Long allowanceId);
+    Mono<Tasktype> getById(Long id);
 
     Mono<Tasktype> findById(Long id);
 
@@ -22,4 +22,6 @@ public interface TasktypeService {
     Flux<TaskDto> getDailyTasks(Long allowanceId);
 
     Mono<TasktypeAllowance> assign(AssignCmd cmd);
+
+    Flux<Tasktype> findDailyTasktypes(Long allowanceId);
 }

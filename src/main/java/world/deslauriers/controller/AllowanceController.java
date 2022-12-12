@@ -29,11 +29,12 @@ public class AllowanceController {
     Flux<Allowance> getAll(){
         return allowanceService.findAll();
     }
-    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
-    @Get("/{id}")
-    Mono<Allowance> getTasksByAllowanceId(Long id){
-        return allowanceService.findTasktypesByAllowanceId(id);
-    }
+
+//    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
+//    @Get("/{id}")
+//    Mono<Allowance> getTasksByAllowanceId(Long id){
+//        return allowanceService.findTasktypesByAllowanceId(id);
+//    }
 
     @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
     @Post

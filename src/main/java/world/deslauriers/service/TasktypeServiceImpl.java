@@ -34,6 +34,12 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
+    public Mono<Tasktype> getById(Long id){
+        return tasktypeRepository.findById(id);
+    }
+
+    // needed for daily task creation.
+    @Override
     public Flux<Tasktype> findDailyTasktypes(Long allowanceId){
         return tasktypeRepository.findDailyTasktypes(allowanceId);
     }

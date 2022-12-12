@@ -4,8 +4,12 @@ plugins {
     id("io.micronaut.test-resources") version "3.6.3"
 }
 
-version = "0.1"
+version = '0.1'
 group = "world.deslauriers"
+
+dockerBuild {
+    images = ["tdeslauriers/allowance:${project.version}"]
+}
 
 repositories {
     mavenCentral()
@@ -13,14 +17,16 @@ repositories {
 
 dependencies {
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
-
-    implementation("io.dekorate:kubernetes-annotations")
+    annotationProcessor("io.dekorate:kubernetes-annotations:2.11.1")
     annotationProcessor("io.micronaut.data:micronaut-data-processor")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     annotationProcessor("io.micronaut.security:micronaut-security-annotations")
+
+    implementation("io.dekorate:kubernetes-annotations:2.11.1")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-management")
     implementation("io.micronaut.data:micronaut-data-hibernate-reactive")
     implementation("io.micronaut.reactor:micronaut-reactor")
     implementation("io.micronaut.reactor:micronaut-reactor-http-client")
