@@ -30,7 +30,7 @@ public class TasktypeController {
     @Secured({"ALLOWANCE_ADMIN"})
     @Get
     Flux<Tasktype> getAll(){
-        return tasktypeService.findAll();
+        return tasktypeService.getAllActive();
     }
 
 //    @Secured({"ALLOWANCE_ADMIN"})

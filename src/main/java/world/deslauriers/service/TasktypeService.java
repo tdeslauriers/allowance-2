@@ -9,7 +9,7 @@ import world.deslauriers.service.dto.AssignCmd;
 import world.deslauriers.service.dto.TaskDto;
 
 public interface TasktypeService {
-    Flux<Tasktype> findAll();
+    Flux<Tasktype> getAllActive();
 
     Mono<Tasktype> getById(Long id);
 

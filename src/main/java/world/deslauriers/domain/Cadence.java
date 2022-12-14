@@ -1,5 +1,5 @@
 package world.deslauriers.domain;
 
 public enum Cadence {
-    DAILY, WEEKLY, ADHOC, ONE_TIME
+    DAILY, WEEKLY, MONTHLY, NINETY_DAYS, ADHOC,
 }

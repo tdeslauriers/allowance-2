@@ -29,7 +29,7 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
-    public Flux<Tasktype> findAll() {
+    public Flux<Tasktype> getAllActive() {
         return tasktypeRepository.findAllActive();
     }
 
@@ -38,7 +38,7 @@ public class TasktypeServiceImpl implements TasktypeService {
         return tasktypeRepository.findById(id);
     }
 
-    // needed for daily task creation.
+    // need
     @Override
     public Flux<Tasktype> findDailyTasktypes(Long allowanceId){
         return tasktypeRepository.findDailyTasktypes(allowanceId);
