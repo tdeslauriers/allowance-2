@@ -25,7 +25,7 @@ public class Tasktype {
     private String category;
 
     @NonNull
-    private Boolean isArchived;
+    private Boolean archived;
 
     @OneToMany(mappedBy = "tasktype")
     @JsonIgnore
@@ -38,30 +38,27 @@ public class Tasktype {
     public Tasktype() {
     }
 
-    public Tasktype(Long id, Boolean isArchived) {
-        this.id = id;
-        this.isArchived = isArchived;
-    }
-
-    public Tasktype(@NonNull String name, @NonNull String cadence, @NonNull String category) {
+    public Tasktype(@NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived) {
         this.name = name;
         this.cadence = cadence;
         this.category = category;
+        this.archived = archived;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, Boolean isArchived) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
         this.category = category;
-        this.isArchived = isArchived;
+        this.archived = archived;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
         this.category = category;
+        this.archived = archived;
         this.tasktypeAllowances = tasktypeAllowances;
         this.tasks = tasks;
     }
@@ -101,12 +98,13 @@ public class Tasktype {
         this.category = category;
     }
 
+    @NonNull
     public Boolean getArchived() {
-        return isArchived;
+        return archived;
     }
 
-    public void setArchived(Boolean archived) {
-        isArchived = archived;
+    public void setArchived(@NonNull Boolean archived) {
+        this.archived = archived;
     }
 
     public Set<TasktypeAllowance> getTasktypeAllowances() {

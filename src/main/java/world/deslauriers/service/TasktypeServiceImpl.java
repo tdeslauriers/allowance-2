@@ -55,7 +55,7 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCadence(cmd.getCadence())){
             throw new ValidationException("Incorrect cadence provided.");
         }
-        return tasktypeRepository.save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory()));
+        return tasktypeRepository.save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()));
     }
 
     @Override

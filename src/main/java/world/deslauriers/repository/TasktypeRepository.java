@@ -11,10 +11,10 @@ import world.deslauriers.service.dto.TaskDto;
 @Repository
 public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long> {
 
-    @Query("FROM Tasktype tt WHERE tt.isArchived = false")
+    @Query("FROM Tasktype tt WHERE tt.archived = false")
     Flux<Tasktype> findAllActive();
 
-    @Query("FROM Tasktype tt WHERE tt.id = :id AND tt.isArchived = false")
+    @Query("FROM Tasktype tt WHERE tt.id = :id AND tt.archived = false")
     Mono<Tasktype> findById(Long id);
 
     Mono<Tasktype> save(Tasktype tasktype);
