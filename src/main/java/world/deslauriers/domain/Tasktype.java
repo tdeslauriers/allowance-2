@@ -24,6 +24,7 @@ public class Tasktype {
     @NonNull
     private String category;
 
+    @NonNull
     private Boolean isArchived;
 
     @OneToMany(mappedBy = "tasktype")
