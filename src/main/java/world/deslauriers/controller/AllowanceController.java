@@ -25,6 +25,7 @@ public class AllowanceController {
         this.allowanceService = allowanceService;
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
     @Get
     Flux<Allowance> getAll(){
         return allowanceService.findAll();
