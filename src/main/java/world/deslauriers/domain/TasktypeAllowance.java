@@ -17,11 +17,11 @@ public class TasktypeAllowance {
 
     @Nullable
     @ManyToOne
+    @JsonIgnore
     private Tasktype tasktype;
 
     @Nullable
     @ManyToOne
-    @JsonIgnore
     private Allowance allowance;
 
     public TasktypeAllowance() {

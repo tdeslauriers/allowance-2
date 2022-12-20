@@ -28,7 +28,6 @@ public class Tasktype {
     private Boolean archived;
 
     @OneToMany(mappedBy = "tasktype")
-    @JsonIgnore
     private Set<TasktypeAllowance> tasktypeAllowances;
 
     @JsonIgnore

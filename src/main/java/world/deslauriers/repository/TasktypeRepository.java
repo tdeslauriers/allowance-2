@@ -1,5 +1,6 @@
 package world.deslauriers.repository;
 
+import io.micronaut.data.annotation.Join;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
@@ -11,11 +12,13 @@ import world.deslauriers.service.dto.TaskDto;
 @Repository
 public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long> {
 
-    @Query("FROM Tasktype tt WHERE tt.archived = false")
-    Flux<Tasktype> findAllActive();
+    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.allowance", type = Join.Type.LEFT_FETCH)
+    Flux<Tasktype> findByArchivedFalse();
 
-    @Query("FROM Tasktype tt WHERE tt.id = :id AND tt.archived = false")
-    Mono<Tasktype> findById(Long id);
+    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.allowance", type = Join.Type.LEFT_FETCH)
+    Mono<Tasktype> findByIdAndArchivedFalse(Long id);
 
     Mono<Tasktype> save(Tasktype tasktype);
 

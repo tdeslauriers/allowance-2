@@ -30,12 +30,12 @@ public class TasktypeServiceImpl implements TasktypeService {
 
     @Override
     public Flux<Tasktype> getAllActive() {
-        return tasktypeRepository.findAllActive();
+        return tasktypeRepository.findByArchivedFalse();
     }
 
     @Override
     public Mono<Tasktype> getById(Long id){
-        return tasktypeRepository.findById(id);
+        return tasktypeRepository.findByIdAndArchivedFalse(id);
     }
 
     // need

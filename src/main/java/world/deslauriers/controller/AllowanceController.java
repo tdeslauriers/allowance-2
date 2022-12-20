@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 import world.deslauriers.service.AllowanceService;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)

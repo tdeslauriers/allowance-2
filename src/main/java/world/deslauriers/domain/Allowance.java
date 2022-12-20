@@ -17,6 +17,7 @@ public class Allowance {
     private Long userId;
 
     @OneToMany(mappedBy = "allowance")
+    @JsonIgnore
     private Set<TasktypeAllowance> tasktypeAllowances;
 
     @OneToMany(mappedBy = "allowance")
