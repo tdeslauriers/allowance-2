@@ -14,7 +14,7 @@ public class Allowance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Double balance;
-    private Long userId;
+    private String userUuid;
 
     @OneToMany(mappedBy = "allowance")
     @JsonIgnore
@@ -27,21 +27,21 @@ public class Allowance {
     public Allowance() {
     }
 
-    public Allowance(Double balance, Long userId) {
+    public Allowance(Double balance, String userUuid) {
         this.balance = balance;
-        this.userId = userId;
+        this.userUuid = userUuid;
     }
 
-    public Allowance(Long id, Double balance, Long userId) {
+    public Allowance(Long id, Double balance, String userUuid) {
         this.id = id;
         this.balance = balance;
-        this.userId = userId;
+        this.userUuid = userUuid;
     }
 
-    public Allowance(Long id, Double balance, Long userId, Set<TasktypeAllowance> tasktypeAllowances, Set<TaskAllowance> taskAllowances) {
+    public Allowance(Long id, Double balance, String userUuid, Set<TasktypeAllowance> tasktypeAllowances, Set<TaskAllowance> taskAllowances) {
         this.id = id;
         this.balance = balance;
-        this.userId = userId;
+        this.userUuid = userUuid;
         this.tasktypeAllowances = tasktypeAllowances;
         this.taskAllowances = taskAllowances;
     }
@@ -62,12 +62,12 @@ public class Allowance {
         this.balance = balance;
     }
 
-    public Long getUserId() {
-        return userId;
+    public String getUserUuid() {
+        return userUuid;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserUuid(String userUuid) {
+        this.userUuid = userUuid;
     }
 
     public Set<TasktypeAllowance> getTasktypeAllowances() {

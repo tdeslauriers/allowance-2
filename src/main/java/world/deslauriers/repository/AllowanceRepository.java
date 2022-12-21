@@ -13,7 +13,7 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
 
     Mono<Allowance> save(Allowance allowance);
 
-    @Query("SELECT new world.deslauriers.domain.Allowance( a.id, a.balance, a.userId) FROM Allowance a")
+    @Query("SELECT new world.deslauriers.domain.Allowance( a.id, a.balance, a.userUuid) FROM Allowance a")
     Flux<Allowance> findAll();
 
     @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
