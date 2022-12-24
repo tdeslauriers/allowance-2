@@ -8,13 +8,10 @@ import io.micronaut.security.rules.SecurityRule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
-import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.service.TasktypeService;
 import world.deslauriers.service.dto.ArchiveCmd;
-import world.deslauriers.service.dto.AssignCmd;
 import world.deslauriers.service.dto.TaskDto;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -57,11 +54,11 @@ public class TasktypeController {
 
     @Secured({"ALLOWANCE_ADMIN"})
     @Put
-    Mono<HttpResponse<Tasktype>> update(@Body @Valid Tasktype cmd){
+    Mono<HttpResponse<Tasktype>> update(@Body Tasktype cmd){
         return tasktypeService
                 .update(cmd)
                 .map(tasktype -> HttpResponse
-                        .<Tasktype>noContent()
+                        .ok(tasktype)
                         .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
     }
 
@@ -76,16 +73,6 @@ public class TasktypeController {
                 })
                 .map(tasktype -> HttpResponse
                         .noContent());
-    }
-
-    @Secured({"ALLOWANCE_ADMIN"})
-    @Post("/assign")
-    Mono<HttpResponse<TasktypeAllowance>> assignTask(@Body @Valid AssignCmd cmd){
-        return tasktypeService
-                .assign(cmd)
-                .map(tasktypeAllowance -> HttpResponse
-                        .noContent());
-
     }
 
     @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})

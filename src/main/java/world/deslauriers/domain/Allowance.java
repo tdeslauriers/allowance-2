@@ -1,6 +1,7 @@
 package world.deslauriers.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ public class Allowance {
     private String userUuid;
 
     @OneToMany(mappedBy = "allowance")
+    @Nullable
     @JsonIgnore
     private Set<TasktypeAllowance> tasktypeAllowances;
 
