@@ -4,22 +4,21 @@ import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.Disposable;
 
 @Singleton
 public class Scheduler {
 
     private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
-    private final TaskService taskService;
+    private final TasktypeService tasktypeService;
 
-    public Scheduler(TaskService taskService) {
-        this.taskService = taskService;
+    public Scheduler(TasktypeService tasktypeService) {
+        this.tasktypeService = tasktypeService;
     }
 
     @Scheduled(cron = "0 0 3 * * *")
     void dailyTasks(){
 
-        log.info("Creating daily tasks.");
-        taskService.createDailyTasks().subscribe();
+        tasktypeService.createDailyTasks().subscribe();
+        log.info("Daily tasks created.");
     }
 }

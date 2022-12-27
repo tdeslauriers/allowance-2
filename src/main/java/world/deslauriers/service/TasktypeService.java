@@ -2,6 +2,7 @@ package world.deslauriers.service;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.service.dto.TaskDto;
 
@@ -12,11 +13,11 @@ public interface TasktypeService {
 
     Mono<Tasktype> findById(Long id);
 
+    Flux<TaskAllowance> createDailyTasks();
+
     Mono<Tasktype> save(Tasktype cmd);
 
     Mono<Tasktype> update(Tasktype cmd);
 
-    Flux<TaskDto> getDailyTasks(Long allowanceId);
-
-    Flux<Tasktype> findDailyTasktypes(Long allowanceId);
+    Flux<Tasktype> findDailyTasktypes(Long id);
 }

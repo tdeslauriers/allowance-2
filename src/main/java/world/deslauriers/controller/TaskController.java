@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
 import world.deslauriers.service.TaskService;
@@ -33,7 +34,13 @@ public class TaskController {
 //        return taskService.getById(id);
 //    }
 
-    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
+    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
+    @Get("/daily/{userUuid}")
+    Flux<TaskDto> getDailyTodoList(String userUuid){
+        return taskService.getDailyToDoList(userUuid);
+    }
+
+    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
     @Put("/complete")
     Mono<HttpResponse> updateIsComplete(@Body @Valid CompleteQualityCmd cmd){
         return taskService
@@ -45,7 +52,7 @@ public class TaskController {
 
     @Secured({"ALLOWANCE_ADMIN"})
     @Put("/quality")
-    Mono<HttpResponse> updateIsCQuality(@Body @Valid CompleteQualityCmd cmd){
+    Mono<HttpResponse> updateIsQuality(@Body @Valid CompleteQualityCmd cmd){
         return taskService
                 .updateQuality(cmd)
                 .map(task -> HttpResponse

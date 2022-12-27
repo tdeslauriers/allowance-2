@@ -24,30 +24,7 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
 
     // using hibernate sql syntax
     // adhoc tasks need to show until complete, day over day, week over week
-    @Query(value = """
-            SELECT new world.deslauriers.service.dto.TaskDto(
-              t.id,
-              tt.name,
-              tt.cadence,
-              tt.category,
-              t.date,
-              t.isComplete,
-              t.isQuality)
-            FROM Task t
-              LEFT JOIN t.tasktype tt
-              LEFT JOIN tt.tasktypeAllowances tta
-              LEFT JOIN tta.allowance a
-            WHERE
-                    a.id = :allowanceId
-                 AND
-                    (t.date = CURDATE()
-                        OR
-                                (tt.cadence = 'adhoc'
-                            AND 
-                                t.isComplete = false)
-                    )
-              """)
-    Flux<TaskDto> findToDoList(Long allowanceId);
+
 
     // needed for daily task creation.
     @Query(value = """
@@ -55,13 +32,16 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
               tt.id,
               tt.name,
               tt.cadence,
-              tt.category)
+              tt.category,
+              tt.archived)
             FROM Tasktype tt
               LEFT JOIN tt.tasktypeAllowances tta
               LEFT JOIN tta.allowance a
             WHERE
                 tt.cadence = 'daily'
               AND
+                tt.archived = false
+              AND 
                 a.id = :allowanceId
             """)
     Flux<Tasktype> findDailyTasktypes(Long allowanceId);

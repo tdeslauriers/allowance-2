@@ -1,31 +1,31 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import world.deslauriers.domain.Cadence;
-import world.deslauriers.domain.Category;
-import world.deslauriers.domain.Tasktype;
-import world.deslauriers.domain.TasktypeAllowance;
-import world.deslauriers.repository.TasktypeAllowanceRepository;
+import world.deslauriers.domain.*;
 import world.deslauriers.repository.TasktypeRepository;
-import world.deslauriers.service.dto.TaskDto;
 
 import javax.validation.ValidationException;
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Singleton
 public class TasktypeServiceImpl implements TasktypeService {
 
     private final TasktypeRepository tasktypeRepository;
+    private final TasktypeAllowanceService tasktypeAllowanceService;
+    private final TaskAllowanceService taskAllowanceService;
     private final AllowanceService allowanceService;
-    private final TasktypeAllowanceRepository tasktypeAllowanceRepository;
+    private final TaskService taskService;
 
-    public TasktypeServiceImpl(TasktypeRepository tasktypeRepository, AllowanceService allowanceService, TasktypeAllowanceRepository tasktypeAllowanceRepository) {
+    public TasktypeServiceImpl(TasktypeRepository tasktypeRepository, TasktypeAllowanceService tasktypeAllowanceService, TaskAllowanceService taskAllowanceService, AllowanceService allowanceService, TaskService taskService) {
         this.tasktypeRepository = tasktypeRepository;
+        this.tasktypeAllowanceService = tasktypeAllowanceService;
+        this.taskAllowanceService = taskAllowanceService;
         this.allowanceService = allowanceService;
-        this.tasktypeAllowanceRepository = tasktypeAllowanceRepository;
+        this.taskService = taskService;
     }
 
     @Override
@@ -38,11 +38,6 @@ public class TasktypeServiceImpl implements TasktypeService {
         return tasktypeRepository.findByIdAndArchivedFalse(id);
     }
 
-    // need
-    @Override
-    public Flux<Tasktype> findDailyTasktypes(Long allowanceId){
-        return tasktypeRepository.findDailyTasktypes(allowanceId).distinct();
-    }
 
     @Override
     public Mono<Tasktype> findById(Long id){
@@ -50,22 +45,47 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
+    public Flux<TaskAllowance> createDailyTasks(){
+
+        return allowanceService.findAll()
+                .flatMap(allowance -> tasktypeRepository.findDailyTasktypes(allowance.getId()).distinct()
+                        .flatMap(tasktype -> taskService.save(new Task(LocalDate.now(), false, false, tasktype)))
+                        .flatMap(task -> taskAllowanceService.save(new TaskAllowance(task, allowance))));
+    }
+
+    @Override
     public Mono<Tasktype> save(Tasktype cmd) {
 
         if (!isValidCadence(cmd.getCadence())) throw new ValidationException("Incorrect cadence provided.");
         if (!isValidCategory(cmd.getCategory())) throw new ValidationException("Incorrect category provided.");
-        if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0){
-            // this is a gross hack.
-            return tasktypeRepository
-                    .save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
-                    .map(tasktype -> {
-                        cmd.setId(tasktype.getId());
-                        assignTasktypes(cmd).subscribe();
-                        return cmd;
-                    });
-        }
+
         return tasktypeRepository
-                .save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()));
+                .save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
+                .map(tasktype -> {
+                    // creates a task for adhoc's since they don't have scheduled creation.
+                    if (tasktype.getCadence().toUpperCase().equals(Cadence.ADHOC.toString()) &&
+                            cmd.getTasktypeAllowances() != null &&
+                            cmd.getTasktypeAllowances().size() > 0){
+                        var t = new Task(LocalDate.now(), false, false, tasktype);
+                        taskService.save(t)
+                                .map(task -> {
+                                    Flux.fromStream(cmd.getTasktypeAllowances().stream())
+                                                .flatMap(tasktypeAllowance -> {
+                                                    return taskAllowanceService.save(new TaskAllowance(task, tasktypeAllowance.getAllowance()));
+                                                }).subscribe();
+                                    return task;
+                                }).subscribe();
+                    }
+                    return tasktype;
+                })
+                .map(tasktype -> {
+                    cmd.setId(tasktype.getId());
+                    if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0) {
+                        assignTasktypes(cmd).subscribe();
+                    }
+                    // gross hack to return data.
+                    return cmd;
+                });
     }
 
     @Override
@@ -73,20 +93,20 @@ public class TasktypeServiceImpl implements TasktypeService {
 
         if (!isValidCadence(cmd.getCadence())) throw new ValidationException("Incorrect cadence provided.");
         if (!isValidCategory(cmd.getCategory())) throw new ValidationException("Incorrect category provided.");
-        if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0) {
-            // this is a gross hack.
-            return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
-                    .map(tasktype -> {
+
+        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
+                .map(tasktype -> {
+                    if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0){
                         assignTasktypes(cmd).subscribe();
-                        return cmd;
-                    });
-        }
-        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()));
+                    }
+                    // gross hack to retun data
+                    return cmd;
+                });
     }
 
     @Override
-    public Flux<TaskDto> getDailyTasks(Long allowanceId) {
-        return tasktypeRepository.findToDoList(allowanceId);
+    public Flux<Tasktype> findDailyTasktypes(Long allowanceId) {
+        return tasktypeRepository.findDailyTasktypes(allowanceId);
     }
 
     private Boolean isValidCadence(String cadence){
@@ -111,8 +131,10 @@ public class TasktypeServiceImpl implements TasktypeService {
 
     private Flux<TasktypeAllowance> assignTasktypes(Tasktype cmd){
 
-       return Flux.fromStream(cmd.getTasktypeAllowances().stream()).flatMap(tasktypeAllowance -> tasktypeAllowanceRepository
+       return Flux.fromStream(cmd.getTasktypeAllowances().stream()).flatMap(tasktypeAllowance -> tasktypeAllowanceService
                    .findByTasktypeAndAllowance(cmd, tasktypeAllowance.getAllowance())
-                   .switchIfEmpty(tasktypeAllowanceRepository.save(new TasktypeAllowance(cmd, tasktypeAllowance.getAllowance()))));
+                   .switchIfEmpty(tasktypeAllowanceService.save(new TasktypeAllowance(cmd, tasktypeAllowance.getAllowance()))));
     }
+
+
 }
