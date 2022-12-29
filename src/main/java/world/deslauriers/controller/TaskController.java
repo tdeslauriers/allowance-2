@@ -7,6 +7,7 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,16 +29,10 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-//    @Secured({"ALLOWANCE_ADMIN, ALLOWANCE_USER"})
-//    @Get("/{id}")
-//    Mono<TaskDto> getById(Long id){
-//        return taskService.getById(id);
-//    }
-
-    @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
-    @Get("/daily/{userUuid}")
-    Flux<TaskDto> getDailyTodoList(String userUuid){
-        return taskService.getDailyToDoList(userUuid);
+    @Secured({"ALLOWANCE_USER"})
+    @Get("/daily")
+    Flux<TaskDto> getDailyTodoList(Authentication authentication){
+        return taskService.getDailyToDoList(authentication.getAttributes().get("user_uuid").toString());
     }
 
     @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
