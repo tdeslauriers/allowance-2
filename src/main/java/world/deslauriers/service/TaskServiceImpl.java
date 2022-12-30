@@ -36,7 +36,6 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Flux<TaskDto> getDailyToDoList(String userUuid) {
-        System.out.println(userUuid);
         // added calc for last 7 days to include weekly tasks.
         // hibernate does not have mysql syntax of 'interval'
         return taskRepository.findToDoList(userUuid, LocalDate.now().minusDays(7L));
