@@ -48,8 +48,8 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
               t.isQuality)
             FROM Task t
               LEFT JOIN t.tasktype tt
-              LEFT JOIN tt.tasktypeAllowances tta
-              LEFT JOIN tta.allowance a
+              LEFT JOIN t.taskAllowances ta
+              LEFT JOIN ta.allowance a
             WHERE
                     a.userUuid = :userUuid
                  AND

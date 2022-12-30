@@ -15,10 +15,11 @@ public class Scheduler {
         this.tasktypeService = tasktypeService;
     }
 
-    @Scheduled(cron = "0 0 3 * * *")
+//    @Scheduled(cron = "0 0 4 * * *")
+//    @Scheduled(fixedDelay = "15s")
     void dailyTasks(){
 
-        tasktypeService.createDailyTasks().subscribe();
         log.info("Daily tasks created.");
+        tasktypeService.createDailyTasks().subscribe();
     }
 }
