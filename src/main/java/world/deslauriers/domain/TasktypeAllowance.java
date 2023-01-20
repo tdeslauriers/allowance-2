@@ -3,25 +3,27 @@ package world.deslauriers.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Nullable;
 
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.serde.annotation.Serdeable;
 
-import javax.persistence.*;
-
 @Serdeable
-@Entity
+@MappedEntity
 public class TasktypeAllowance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
 
     @Nullable
-    @ManyToOne
     @JsonIgnore
+    @Relation(Relation.Kind.MANY_TO_ONE)
     private Tasktype tasktype;
 
     @Nullable
-    @ManyToOne
+    @Relation(Relation.Kind.MANY_TO_ONE)
     private Allowance allowance;
 
     public TasktypeAllowance() {

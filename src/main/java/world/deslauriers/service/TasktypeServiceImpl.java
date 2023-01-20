@@ -1,6 +1,8 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,6 +15,8 @@ import java.util.Objects;
 
 @Singleton
 public class TasktypeServiceImpl implements TasktypeService {
+
+    private static final Logger log = LoggerFactory.getLogger(TasktypeServiceImpl.class);
 
     private final TasktypeRepository tasktypeRepository;
     private final TasktypeAllowanceService tasktypeAllowanceService;
@@ -45,12 +49,15 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
-    public Flux<TaskAllowance> createDailyTasks(){
-
+    public Flux<?> createDailyTasks() {
         return allowanceService.findAll()
-                .flatMap(allowance -> tasktypeRepository.findDailyTasktypes(allowance.getId()).distinct()
-                        .flatMap(tasktype -> taskService.save(new Task(LocalDate.now(), false, false, tasktype)))
-                        .flatMap(task -> taskAllowanceService.save(new TaskAllowance(task, allowance))));
+                .map(allowance -> findDailyTasktypes(allowance.getId())
+                        .map(tasktype -> taskService.save(new Task(LocalDate.now(), false, false, tasktype))
+                                .map(task -> taskAllowanceService.save(new TaskAllowance(task, allowance))
+                                        .subscribe(taskAllowance -> log.info("Created task: {} - {}; assigned to {}",
+                                                taskAllowance.getTask().getId(), task.getTasktype().getName(), taskAllowance.getAllowance().getUserUuid()))
+                                ).subscribe()
+                        ).subscribe());
     }
 
     @Override

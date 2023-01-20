@@ -24,7 +24,7 @@ public class TaskServiceImpl implements TaskService{
     public Mono<Task> updateComplete(CompleteQualityCmd cmd) {
         return taskRepository
                 .findById(cmd.taskId())
-                .flatMap(task -> taskRepository.update(new Task(task.getId(), task.getDate(), cmd.status(), task.getQuality(), task.getTasktype())));
+                .flatMap(task -> taskRepository.update(new Task(task.getId(), task.getDate(), cmd.status(), task.getSatisfactory(), task.getTasktype())));
     }
 
     @Override

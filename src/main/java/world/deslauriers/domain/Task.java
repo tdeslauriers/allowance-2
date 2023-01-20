@@ -1,59 +1,72 @@
 package world.deslauriers.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.annotation.*;
 import io.micronaut.serde.annotation.Serdeable;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Serdeable
-@Entity
+@MappedEntity
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     Long id;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @DateCreated
+    @NotNull
     private LocalDate date;
-    private Boolean isComplete;
-    private Boolean isQuality;
+    @NotNull
+    private Boolean complete;
+    @NotNull
+    private Boolean satisfactory;
 
-    @ManyToOne
+    @Relation(Relation.Kind.MANY_TO_ONE)
     private Tasktype tasktype;
 
-    @OneToMany(mappedBy = "task")
-    @JsonIgnore
+    @Relation(value = Relation.Kind.ONE_TO_MANY, mappedBy = "task")
     private Set<TaskAllowance> taskAllowances;
 
     public Task() {
     }
 
-    public Task(LocalDate date, Boolean isComplete, Boolean isQuality) {
+    public Task(LocalDate date, Boolean complete, Boolean satisfactory) {
         this.date = date;
-        this.isComplete = isComplete;
-        this.isQuality = isQuality;
+        this.complete = complete;
+        this.satisfactory = satisfactory;
     }
 
-    public Task(LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype) {
+    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory) {
+        this.id = id;
         this.date = date;
-        this.isComplete = isComplete;
-        this.isQuality = isQuality;
+        this.complete = complete;
+        this.satisfactory = satisfactory;
+    }
+
+    public Task(LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
+        this.date = date;
+        this.complete = complete;
+        this.satisfactory = satisfactory;
         this.tasktype = tasktype;
     }
 
-    public Task(Long id, LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype) {
+    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
         this.id = id;
         this.date = date;
-        this.isComplete = isComplete;
-        this.isQuality = isQuality;
+        this.complete = complete;
+        this.satisfactory = satisfactory;
         this.tasktype = tasktype;
     }
 
-    public Task(Long id, LocalDate date, Boolean isComplete, Boolean isQuality, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {
+    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {
         this.id = id;
         this.date = date;
-        this.isComplete = isComplete;
-        this.isQuality = isQuality;
+        this.complete = complete;
+        this.satisfactory = satisfactory;
         this.tasktype = tasktype;
         this.taskAllowances = taskAllowances;
     }
@@ -75,19 +88,19 @@ public class Task {
     }
 
     public Boolean getComplete() {
-        return isComplete;
+        return complete;
     }
 
     public void setComplete(Boolean complete) {
-        isComplete = complete;
+        this.complete = complete;
     }
 
-    public Boolean getQuality() {
-        return isQuality;
+    public Boolean getSatisfactory() {
+        return satisfactory;
     }
 
-    public void setQuality(Boolean quality) {
-        isQuality = quality;
+    public void setSatisfactory(Boolean satisfactory) {
+        this.satisfactory = satisfactory;
     }
 
     public Tasktype getTasktype() {
@@ -104,5 +117,17 @@ public class Task {
 
     public void setTaskAllowances(Set<TaskAllowance> taskAllowances) {
         this.taskAllowances = taskAllowances;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+               "id=" + id +
+               ", date=" + date +
+               ", complete=" + complete +
+               ", satisfactory=" + satisfactory +
+               ", tasktype=" + tasktype +
+               ", taskAllowances=" + taskAllowances +
+               '}';
     }
 }

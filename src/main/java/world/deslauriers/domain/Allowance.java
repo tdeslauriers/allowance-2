@@ -1,28 +1,33 @@
 package world.deslauriers.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.micronaut.core.annotation.NonNull;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.serde.annotation.Serdeable;
 
-import javax.persistence.*;
 import java.util.Set;
 
 @Serdeable
-@Entity
+@MappedEntity
 public class Allowance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
     private Double balance;
+    @NonNull
     private String userUuid;
 
-    @OneToMany(mappedBy = "allowance")
+    @Relation(value = Relation.Kind.ONE_TO_MANY, mappedBy = "allowance")
     @Nullable
     @JsonIgnore
     private Set<TasktypeAllowance> tasktypeAllowances;
 
-    @OneToMany(mappedBy = "allowance")
+    @Relation(value = Relation.Kind.ONE_TO_MANY, mappedBy = "allowance")
     @JsonIgnore
     private Set<TaskAllowance> taskAllowances;
 
@@ -86,5 +91,16 @@ public class Allowance {
 
     public void setTaskAllowances(Set<TaskAllowance> taskAllowances) {
         this.taskAllowances = taskAllowances;
+    }
+
+    @Override
+    public String toString() {
+        return "Allowance{" +
+                "id=" + id +
+                ", balance=" + balance +
+                ", userUuid='" + userUuid + '\'' +
+                ", tasktypeAllowances=" + tasktypeAllowances +
+                ", taskAllowances=" + taskAllowances +
+                '}';
     }
 }
