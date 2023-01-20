@@ -22,10 +22,9 @@ public class Scheduler {
         this.allowanceService = allowanceService;
     }
 
-    @Scheduled(fixedDelay = "5s")
-//    @Scheduled(cron = "0 0 4 * * *")
+//    @Scheduled(fixedDelay = "5s")
+    @Scheduled(cron = "0 0 4 * * *")
     void dailyTasks(){
-
         tasktypeService.createDailyTasks().subscribe();
     }
 }
