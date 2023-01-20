@@ -3,8 +3,11 @@ micronaut:
     name: allowance
   server:
     port: 8083
-#    cors:
-#      enabled: true
+  netty:
+    event-loops:
+      other:
+        num-threads: 10
+        prefer-native-transport: true
   security:
     token:
       jwt:
@@ -12,23 +15,25 @@ micronaut:
           secret:
             validation:
               secret: ${JWT_GENERATOR_SIGNATURE_SECRET}
-
 ---
-jpa:
+r2dbc:
+  datasources:
+    default:
+      dialect: MYSQL
+      url: ${ALLOWANCE_R2DBC_URL}
+      username: ${ALLOWANCE_JDBC_USER}
+      password: ${ALLOWANCE_JDBC_PASSWORD}
+datasources:
   default:
-    entity-scan:
-      packages:
-        - 'world.deslauriers.domain'
-    properties:
-      hibernate:
-        hbm2ddl:
-          auto: update
-        connection:
-          db-type: mariadb
-          url: ${ALLOWANCE_JDBC_URL}
-          username: ${ALLOWANCE_JDBC_USER}
-          password: ${ALLOWANCE_JDBC_PASSWORD}
-    reactive: true
+    dialect: MYSQL
+    url: ${ALLOWANCE_JDBC_URL}
+    username: ${ALLOWANCE_JDBC_USER}
+    password: ${ALLOWANCE_JDBC_PASSWORD}
+---
+flyway:
+  datasources:
+    default:
+      enabled: true
 netty:
   default:
     allocator:

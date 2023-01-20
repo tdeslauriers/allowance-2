@@ -2,14 +2,14 @@ package world.deslauriers.repository;
 
 import io.micronaut.data.annotation.Join;
 import io.micronaut.data.annotation.Query;
-import io.micronaut.data.annotation.Repository;
+import io.micronaut.data.model.query.builder.sql.Dialect;
+import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
-import world.deslauriers.service.dto.TaskDto;
 
-@Repository
+@R2dbcRepository(dialect = Dialect.MYSQL)
 public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long> {
 
     @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
@@ -22,27 +22,22 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
 
     Mono<Tasktype> save(Tasktype tasktype);
 
-    // using hibernate sql syntax
-    // adhoc tasks need to show until complete, day over day, week over week
-
-
-    // needed for daily task creation.
     @Query(value = """
-            SELECT new world.deslauriers.domain.Tasktype(
-              tt.id,
-              tt.name,
-              tt.cadence,
-              tt.category,
-              tt.archived)
-            FROM Tasktype tt
-              LEFT JOIN tt.tasktypeAllowances tta
-              LEFT JOIN tta.allowance a
+            SELECT
+                tt.id,
+                tt.name,
+                tt.cadence,
+                tt.category,
+                tt.archived
+            FROM tasktype tt
+                LEFT JOIN tasktype_allowance tta ON tt.id = tta.tasktype_id
+                LEFT JOIN allowance a ON tta.allowance_id = a.id
             WHERE
-                tt.cadence = 'daily'
-              AND
-                tt.archived = false
-              AND 
-                a.id = :allowanceId
+                    tt.cadence = 'Daily'
+                AND
+                    tt.archived = false
+                AND
+                    a.id = :allowanceId
             """)
     Flux<Tasktype> findDailyTasktypes(Long allowanceId);
 }

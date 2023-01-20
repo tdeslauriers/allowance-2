@@ -13,8 +13,8 @@ public record TaskDto(
         String category,
         Boolean archived,
         @JsonFormat(pattern="yyyy-MM-dd") LocalDate date,
-        Boolean isComplete,
-        Boolean isQuality
+        Boolean complete,
+        Boolean satisfactory
 ) {
 
 

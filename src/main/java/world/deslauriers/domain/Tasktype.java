@@ -2,17 +2,21 @@ package world.deslauriers.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.NonNull;
+import io.micronaut.data.annotation.GeneratedValue;
+import io.micronaut.data.annotation.Id;
+import io.micronaut.data.annotation.MappedEntity;
+import io.micronaut.data.annotation.Relation;
 import io.micronaut.serde.annotation.Serdeable;
 
-import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Serdeable
-@Entity
+@MappedEntity
 public class Tasktype {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
 
     @NonNull
@@ -24,27 +28,27 @@ public class Tasktype {
     @NonNull
     private String category;
 
-    @NonNull
+    @NotNull
     private Boolean archived;
 
-    @OneToMany(mappedBy = "tasktype")
+    @Relation(value = Relation.Kind.ONE_TO_MANY, mappedBy = "tasktype")
     private Set<TasktypeAllowance> tasktypeAllowances;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "tasktype")
+    @Relation(value = Relation.Kind.ONE_TO_MANY, mappedBy = "tasktype")
     private Set<Task> tasks;
 
     public Tasktype() {
     }
 
-    public Tasktype(@NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived) {
+    public Tasktype(@NonNull String name, @NonNull String cadence, @NonNull String category, @NotNull Boolean archived) {
         this.name = name;
         this.cadence = cadence;
         this.category = category;
         this.archived = archived;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NotNull Boolean archived) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
@@ -52,7 +56,7 @@ public class Tasktype {
         this.archived = archived;
     }
 
-    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NonNull Boolean archived, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
+    public Tasktype(Long id, @NonNull String name, @NonNull String cadence, @NonNull String category, @NotNull Boolean archived, Set<TasktypeAllowance> tasktypeAllowances, Set<Task> tasks) {
         this.id = id;
         this.name = name;
         this.cadence = cadence;
@@ -97,12 +101,12 @@ public class Tasktype {
         this.category = category;
     }
 
-    @NonNull
+    @NotNull
     public Boolean getArchived() {
         return archived;
     }
 
-    public void setArchived(@NonNull Boolean archived) {
+    public void setArchived(@NotNull Boolean archived) {
         this.archived = archived;
     }
 
@@ -120,5 +124,18 @@ public class Tasktype {
 
     public void setTasks(Set<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    @Override
+    public String toString() {
+        return "Tasktype{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", cadence='" + cadence + '\'' +
+               ", category='" + category + '\'' +
+               ", archived=" + archived +
+               ", tasktypeAllowances=" + tasktypeAllowances +
+               ", tasks=" + tasks +
+               '}';
     }
 }
