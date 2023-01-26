@@ -16,8 +16,8 @@ public class Scheduler {
     }
 
 
-        @Scheduled(fixedDelay = "5s")
-//    @Scheduled(cron = "0 0 18 * * *") // utc time -> needs to create tomorrow's tasks
+//        @Scheduled(fixedDelay = "5s")
+    @Scheduled(cron = "0 0 1 * * *") // utc time -> cst 1 AM
     void dailyTasks(){
         tasktypeService.createDailyTasks().subscribe();
     }

@@ -39,7 +39,15 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
             WHERE
                     a.user_uuid = :userUuid
                 AND
-                    t.date >= :startOfDay
+                    (t.date >= :startOfDay
+                OR
+                        (t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                    AND
+                            (tt.cadence = 'Weekly'
+                        OR
+                                (tt.cadence = 'Adhoc'
+                            AND
+                                t.complete = FALSE))))
             """)
     Flux<TaskDto> findToDoList(String userUuid, OffsetDateTime startOfDay);
 }
