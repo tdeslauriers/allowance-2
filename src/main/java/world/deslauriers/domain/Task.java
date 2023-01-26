@@ -7,6 +7,7 @@ import io.micronaut.serde.annotation.Serdeable;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 @Serdeable
@@ -19,7 +20,7 @@ public class Task {
     @JsonFormat(pattern="yyyy-MM-dd")
     @DateCreated
     @NotNull
-    private LocalDate date;
+    private OffsetDateTime date;
     @NotNull
     private Boolean complete;
     @NotNull
@@ -34,27 +35,27 @@ public class Task {
     public Task() {
     }
 
-    public Task(LocalDate date, Boolean complete, Boolean satisfactory) {
+    public Task(OffsetDateTime date, Boolean complete, Boolean satisfactory) {
         this.date = date;
         this.complete = complete;
         this.satisfactory = satisfactory;
     }
 
-    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory) {
+    public Task(Long id, OffsetDateTime date, Boolean complete, Boolean satisfactory) {
         this.id = id;
         this.date = date;
         this.complete = complete;
         this.satisfactory = satisfactory;
     }
 
-    public Task(LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
+    public Task(OffsetDateTime date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
         this.date = date;
         this.complete = complete;
         this.satisfactory = satisfactory;
         this.tasktype = tasktype;
     }
 
-    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
+    public Task(Long id, OffsetDateTime date, Boolean complete, Boolean satisfactory, Tasktype tasktype) {
         this.id = id;
         this.date = date;
         this.complete = complete;
@@ -62,7 +63,7 @@ public class Task {
         this.tasktype = tasktype;
     }
 
-    public Task(Long id, LocalDate date, Boolean complete, Boolean satisfactory, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {
+    public Task(Long id, OffsetDateTime date, Boolean complete, Boolean satisfactory, Tasktype tasktype, Set<TaskAllowance> taskAllowances) {
         this.id = id;
         this.date = date;
         this.complete = complete;
@@ -79,11 +80,11 @@ public class Task {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 

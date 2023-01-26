@@ -11,6 +11,7 @@ import world.deslauriers.domain.Task;
 import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 @R2dbcRepository(dialect = Dialect.MYSQL)
 public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
@@ -20,24 +21,8 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
     @Join(value = "tasktype", type = Join.Type.LEFT_FETCH)
     Mono<Task> findById(Long id);
 
-//    @Query(value = """
-//            SELECT new world.deslauriers.service.dto.TaskDto(
-//                t.id,
-//                tt.name,
-//                tt.cadence,
-//                tt.category,
-//                t.date,
-//                t.isComplete,
-//                t.isQuality)
-//            FROM Task t
-//                LEFT JOIN t.tasktype tt
-//            WHERE
-//                t.id = :id
-//            """)
-//    Mono<TaskDto> findTaskById(Long id);
-
     @Query(value = """
-            SELECT new world.deslauriers.service.dto.TaskDto(
+            SELECT
               t.id,
               tt.name,
               tt.cadence,
@@ -45,20 +30,16 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
               tt.archived,
               t.date,
               t.complete,
-              t.satisfactory)
+              t.satisfactory,
+              t.tasktype_id
             FROM task t
-              LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
-              LEFT JOIN task_allowance ta ON t.id = ta.task_id
-              LEFT JOIN allowance a ON ta.allowance_id = a.id
+                LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
+                LEFT JOIN task_allowance ta on t.id = ta.task_id
+                LEFT JOIN allowance a ON ta.allowance_id = a.id
             WHERE
                     a.user_uuid = :userUuid
-                 AND
-                    (t.date = CURDATE()
-                        OR
-                            (t.date BETWEEN CURDATE() AND :weekly)
-                        OR
-                            (tt.cadence = 'adhoc' AND t.complete = false)
-                    )
-              """)
-    Flux<TaskDto> findToDoList(String userUuid, LocalDate weekly);
+                AND
+                    t.date >= :startOfDay
+            """)
+    Flux<TaskDto> findToDoList(String userUuid, OffsetDateTime startOfDay);
 }

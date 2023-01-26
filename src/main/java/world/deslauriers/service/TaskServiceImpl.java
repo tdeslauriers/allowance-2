@@ -4,12 +4,14 @@ import jakarta.inject.Singleton;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
-import world.deslauriers.domain.Tasktype;
 import world.deslauriers.repository.TaskRepository;
 import world.deslauriers.service.dto.CompleteQualityCmd;
 import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 @Singleton
 public class TaskServiceImpl implements TaskService{
@@ -36,9 +38,10 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Flux<TaskDto> getDailyToDoList(String userUuid) {
-        // added calc for last 7 days to include weekly tasks.
-        // hibernate does not have mysql syntax of 'interval'
-        return taskRepository.findToDoList(userUuid, LocalDate.now().minusDays(7L));
+        //query param of today's tasks -> today > 12.01 AM CST
+        var startOfDay = OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 1, 0), ZoneOffset.of("-06:00"));
+        return taskRepository.findToDoList(userUuid, startOfDay);
+
     }
 
     @Override
