@@ -34,20 +34,22 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
               t.tasktype_id
             FROM task t
                 LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
-                LEFT JOIN task_allowance ta on t.id = ta.task_id
+                LEFT JOIN task_allowance ta ON t.id = ta.task_id
                 LEFT JOIN allowance a ON ta.allowance_id = a.id
             WHERE
-                    a.user_uuid = :userUuid
+                a.user_uuid = :userUuid
                 AND
-                    (t.date >= :startOfDay
-                OR
-                        (t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
-                    AND
-                            (tt.cadence = 'Weekly'
-                        OR
-                                (tt.cadence = 'Adhoc'
-                            AND
-                                t.complete = FALSE))))
+                    t.date >= NOW() - INTERVAL 24 HOUR
+                    OR
+                    (t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                        AND tt.cadence = 'Weekly')
+                    OR
+                    (tt.cadence = 'Adhoc'
+                        AND t.complete = FALSE)
+                    OR
+                    (tt.cadence = 'Adhoc'
+                        AND t.complete = TRUE
+                        AND t.date >= NOW() - INTERVAL 24 HOUR)
             """)
-    Flux<TaskDto> findToDoList(String userUuid, OffsetDateTime startOfDay);
+    Flux<TaskDto> findToDoList(String userUuid);
 }

@@ -55,10 +55,9 @@ public class TasktypeServiceImpl implements TasktypeService {
     // local date must be tormorrow for utc offset
     @Override
     public Flux<Disposable> createDailyTasks() {
-        var today = OffsetDateTime.now(ZoneOffset.of("-06:00")); // UTC -> CST
         return allowanceService.findAll()
                 .map(allowance -> findDailyTasktypes(allowance.getId())
-                        .map(tasktype -> taskService.save(new Task(today, false, false, tasktype))
+                        .map(tasktype -> taskService.save(new Task(OffsetDateTime.now(), false, false, tasktype))
                                 .map(task -> taskAllowanceService.save(new TaskAllowance(task, allowance))
                                         .subscribe(taskAllowance -> log.info("Created task: {} - {}; assigned to {}",
                                                 taskAllowance.getTask().getId(), task.getTasktype().getName(), taskAllowance.getAllowance().getUserUuid()))
@@ -79,8 +78,7 @@ public class TasktypeServiceImpl implements TasktypeService {
                     if (tasktype.getCadence().toUpperCase().equals(Cadence.ADHOC.toString()) &&
                             cmd.getTasktypeAllowances() != null &&
                             cmd.getTasktypeAllowances().size() > 0){
-                        var today = OffsetDateTime.now(ZoneOffset.of("-06:00")); // UTC -> CST
-                        var t = new Task(today, false, false, tasktype);
+                        var t = new Task(OffsetDateTime.now(), false, false, tasktype);
                         taskService.save(t)
                                 .map(task -> {
                                     Flux.fromStream(cmd.getTasktypeAllowances().stream())

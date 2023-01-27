@@ -15,9 +15,7 @@ public class Scheduler {
         this.tasktypeService = tasktypeService;
     }
 
-
-//        @Scheduled(fixedDelay = "5s")
-    @Scheduled(cron = "0 0 1 * * *") // utc time -> cst 1 AM
+    @Scheduled(cron = "0 1 0 * * *") // created at 12:01 AM UTC
     void dailyTasks(){
         tasktypeService.createDailyTasks().subscribe();
     }

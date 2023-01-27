@@ -1,6 +1,8 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
@@ -16,6 +18,7 @@ import java.time.ZoneOffset;
 @Singleton
 public class TaskServiceImpl implements TaskService{
 
+    private static final Logger log = LoggerFactory.getLogger(TaskServiceImpl.class);
     private final TaskRepository taskRepository;
 
     public TaskServiceImpl(TaskRepository taskRepository) {
@@ -38,9 +41,8 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Flux<TaskDto> getDailyToDoList(String userUuid) {
-        //query param of today's tasks -> today > 12.01 AM CST
-        var startOfDay = OffsetDateTime.of(LocalDate.now(), LocalTime.of(0, 1, 0), ZoneOffset.of("-06:00"));
-        return taskRepository.findToDoList(userUuid, startOfDay);
+
+        return taskRepository.findToDoList(userUuid);
 
     }
 
