@@ -61,19 +61,6 @@ public class TasktypeController {
                         .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
     }
 
-    @Secured({"ALLOWANCE_ADMIN"})
-    @Put("/archive")
-    Mono<HttpResponse<Tasktype>> archive(@Body ArchiveCmd cmd){
-        return tasktypeService
-                .findById(cmd.archiveId())
-                .flatMap(tasktype -> {
-                    tasktype.setArchived(true);
-                    return tasktypeService.update(tasktype);
-                })
-                .map(tasktype -> HttpResponse
-                        .noContent());
-    }
-
     protected URI location(Long id){
         return URI.create("/tasktypes/" + id);
     }
