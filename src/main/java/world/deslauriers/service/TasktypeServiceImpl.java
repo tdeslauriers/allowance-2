@@ -54,15 +54,14 @@ public class TasktypeServiceImpl implements TasktypeService {
 
     // local date must be tormorrow for utc offset
     @Override
-    public Flux<Disposable> createDailyTasks() {
+    public Flux<TaskAllowance> createDailyTasks() {
         return allowanceService.findAll()
-                .map(allowance -> findDailyTasktypes(allowance.getId())
-                        .map(tasktype -> taskService.save(new Task(OffsetDateTime.now(), false, false, tasktype))
-                                .map(task -> taskAllowanceService.save(new TaskAllowance(task, allowance))
-                                        .subscribe(taskAllowance -> log.info("Created task: {} - {}; assigned to {}",
-                                                taskAllowance.getTask().getId(), task.getTasktype().getName(), taskAllowance.getAllowance().getUserUuid()))
-                                ).subscribe()
-                        ).subscribe());
+                .flatMap(allowance -> findDailyTasktypes(allowance.getId())
+                    .flatMap(tasktype -> taskService.save(new Task(OffsetDateTime.now(), false, false, tasktype))
+                        .flatMap(task -> {
+                            log.info("Task {}: {} created; assigning to account {}", task.getId(), tasktype.getName(), allowance.getUserUuid());
+                            return taskAllowanceService.save(new TaskAllowance(task, allowance));
+                        })));
     }
 
     @Override
@@ -95,7 +94,7 @@ public class TasktypeServiceImpl implements TasktypeService {
                     if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0) {
                         assignTasktypes(cmd).subscribe();
                     }
-                    // gross hack to return data.
+                    // gross hack to return data to ui.
                     return cmd;
                 });
     }

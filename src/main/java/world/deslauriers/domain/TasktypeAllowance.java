@@ -65,4 +65,5 @@ public class TasktypeAllowance {
     public void setAllowance(@Nullable Allowance allowance) {
         this.allowance = allowance;
     }
+
 }

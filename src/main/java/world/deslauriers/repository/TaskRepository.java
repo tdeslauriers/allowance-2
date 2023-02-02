@@ -10,9 +10,6 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
 import world.deslauriers.service.dto.TaskDto;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-
 @R2dbcRepository(dialect = Dialect.MYSQL)
 public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
 
@@ -46,10 +43,28 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
                     OR
                     (tt.cadence = 'Adhoc'
                         AND t.complete = FALSE)
-                    OR
-                    (tt.cadence = 'Adhoc'
-                        AND t.complete = TRUE
-                        AND t.date >= NOW() - INTERVAL 24 HOUR)
+
             """)
     Flux<TaskDto> findToDoList(String userUuid);
+
+    @Query(value = """
+            SELECT
+                t.id,
+                t.date,
+                t.complete,
+                t.satisfactory,
+                t.tasktype_id
+            FROM task t
+                LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
+                LEFT JOIN task_allowance ta ON t.id = ta.task_id
+                LEFT JOIN allowance a ON ta.allowance_id = a.id
+            WHERE
+                t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                AND
+                    (tt.cadence = 'Daily'
+                        OR tt.cadence = 'Weekly')
+                AND
+                    a.user_uuid = :uuid        
+            """)
+    Flux<Task> findTasksFromPastWeek(String uuid);
 }

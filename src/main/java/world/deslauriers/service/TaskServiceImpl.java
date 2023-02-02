@@ -10,11 +10,6 @@ import world.deslauriers.repository.TaskRepository;
 import world.deslauriers.service.dto.CompleteQualityCmd;
 import world.deslauriers.service.dto.TaskDto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
 @Singleton
 public class TaskServiceImpl implements TaskService{
 
@@ -44,6 +39,11 @@ public class TaskServiceImpl implements TaskService{
 
         return taskRepository.findToDoList(userUuid);
 
+    }
+
+    @Override
+    public Flux<Task> getTasksFromPastWeek(String uuid){
+        return taskRepository.findTasksFromPastWeek(uuid);
     }
 
     @Override

@@ -13,7 +13,7 @@ public interface TasktypeService {
 
     Mono<Tasktype> findById(Long id);
 
-    Flux<?> createDailyTasks();
+    Flux<TaskAllowance> createDailyTasks();
 
     Mono<Tasktype> save(Tasktype cmd);
 

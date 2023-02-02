@@ -12,4 +12,6 @@ public interface AllowanceService {
     Mono<Allowance> findTasktypesByAllowanceId(Long id);
 
     Mono<Allowance> findById(Long allowanceId);
+
+    Flux<Allowance> conductRemittance();
 }

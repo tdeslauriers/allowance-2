@@ -1,12 +1,10 @@
 package world.deslauriers.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.micronaut.core.annotation.NonNull;
 import io.micronaut.data.annotation.*;
 import io.micronaut.serde.annotation.Serdeable;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Set;
 

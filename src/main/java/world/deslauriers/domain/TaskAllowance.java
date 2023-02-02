@@ -64,4 +64,13 @@ public class TaskAllowance {
     public void setAllowance(@Nullable Allowance allowance) {
         this.allowance = allowance;
     }
+
+    @Override
+    public String toString() {
+        return "TaskAllowance{" +
+                "id=" + id +
+                ", task=" + task +
+                ", allowance=" + allowance +
+                '}';
+    }
 }

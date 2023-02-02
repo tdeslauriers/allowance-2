@@ -8,6 +8,18 @@ micronaut:
       other:
         num-threads: 10
         prefer-native-transport: true
+  http:
+    client:
+      read-timeout: 300s
+      max-content-length: 30MB
+      event-loop-group: other
+    services:
+      gateway:
+        urls:
+          - ${ALLOWANCE_LOGIN_URL}
+        pool:
+          enabled:
+            max-connections: 50
   security:
     token:
       jwt:
@@ -38,3 +50,9 @@ netty:
   default:
     allocator:
       max-order: 3
+---
+allowance:
+  service:
+    credentials:
+      username: ${ALLOWANCE_LOGIN_USERNAME} # login url is above in client stanza
+      password: ${ALLOWANCE_LOGIN_PASSWORD}
