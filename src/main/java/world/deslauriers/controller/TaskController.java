@@ -35,6 +35,12 @@ public class TaskController {
         return taskService.getDailyToDoList(authentication.getAttributes().get("user_uuid").toString());
     }
 
+    @Secured({"ALLOWANCE_ADMIN"})
+    @Get("/daily/{uuid}")
+    Flux<TaskDto> getUserDailyTodoList(String uuid){
+        return taskService.getDailyToDoList(uuid);
+    }
+
     @Secured({"ALLOWANCE_ADMIN", "ALLOWANCE_USER"})
     @Put("/complete")
     Mono<HttpResponse> updateIsComplete(@Body @Valid CompleteQualityCmd cmd){

@@ -110,7 +110,7 @@ public class TasktypeServiceImpl implements TasktypeService {
                     if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0){
                         assignTasktypes(cmd).subscribe();
                     }
-                    // gross hack to retun data
+                    // gross hack to return data
                     return cmd;
                 });
     }
