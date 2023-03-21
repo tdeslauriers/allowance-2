@@ -9,11 +9,16 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.client.GatewayFetcher;
 import world.deslauriers.client.dto.LoginRequest;
 import world.deslauriers.domain.Allowance;
+import world.deslauriers.domain.Tasktype;
 import world.deslauriers.repository.AllowanceRepository;
 import world.deslauriers.service.dto.AllowanceDto;
+import world.deslauriers.service.dto.MetricsDto;
+import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Singleton
 public class AllowanceServiceImpl implements AllowanceService{
@@ -57,6 +62,9 @@ public class AllowanceServiceImpl implements AllowanceService{
     }
 
     @Override
+    public Mono<Allowance> getByUuid(String uuid) { return allowanceRepository.findByUserUuid(uuid);}
+
+    @Override
     public Flux<Allowance> conductRemittance() {
 
        return gatewayFetcher.login(new LoginRequest(username, password))
@@ -83,9 +91,8 @@ public class AllowanceServiceImpl implements AllowanceService{
                                                         var taskValue = ((double) allowanceDto.age()) / total;
                                                         double remittance = 0d;
                                                         for (var t : tasks) {
-                                                            if (t.getComplete() && t.getSatisfactory()) remittance += taskValue;
-                                                            if (t.getComplete() && !t.getSatisfactory())
-                                                                remittance += (taskValue / 2);
+                                                            if (t.getComplete().intValue() == 1 && t.getSatisfactory().intValue() == 1) remittance += taskValue;
+                                                            if (t.getComplete().intValue() == 1 && t.getSatisfactory().intValue() == 0) remittance += (taskValue / 2);
                                                         }
                                                         log.info("Account: {} {}:\nTotal possible: {}\nTotal Earned: {}",
                                                                 allowanceDto.firstname(), allowanceDto.lastname(), allowanceDto.age(), remittance);
@@ -97,5 +104,48 @@ public class AllowanceServiceImpl implements AllowanceService{
                             });
                });
 
+    }
+
+    @Override
+    public Mono<MetricsDto> getAllowanceMetrics(String uuid){
+        return getByUuid(uuid)
+                .zipWith(taskService.getTasksFromPastWeek(uuid).collectList())
+                .map(objects -> {
+                    // set up allowance metrics
+                    var total = objects.getT2().size();
+                    var totalCompleted = objects.getT2()
+                            .stream()
+                            .filter(taskDto -> taskDto.getComplete().intValue() == 1) // byte to boolean
+                            .toList()
+                            .size();
+                    var percentageComplete = totalCompleted > 0 ? ((double) totalCompleted / (double) total) * 100d : 0;
+                    var totalSatisfactory = objects.getT2()
+                            .stream()
+                            .filter(taskDto -> taskDto.getSatisfactory().intValue() == 1) // byte to boolean
+                            .toList()
+                            .size();
+                    var percentageSatisfactory = totalSatisfactory > 0 ? ((double) totalSatisfactory / (double) total) * 100d : 0;
+
+                    var tt = objects.getT2()
+                            .stream()
+                            .peek(taskDto -> {
+                                taskDto.setId(null);
+                                taskDto.setDate(null);
+                                taskDto.setComplete(null);
+                                taskDto.setSatisfactory(null);
+                            })
+                            .collect(Collectors.toCollection(HashSet::new));
+
+                    return new MetricsDto(
+                            objects.getT1().getUserUuid(),
+                            objects.getT1().getBalance(),
+                            total,
+                            totalCompleted,
+                            percentageComplete,
+                            totalSatisfactory,
+                            percentageSatisfactory,
+                            tt
+                    );
+                });
     }
 }

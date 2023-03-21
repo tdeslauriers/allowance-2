@@ -15,4 +15,8 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
     @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
     @Join(value = "tasktypeAllowances.tasktype", type = Join.Type.LEFT_FETCH)
     Mono<Allowance> findById(Long id);
+
+    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.tasktype", type = Join.Type.LEFT_FETCH)
+    Mono<Allowance> findByUserUuid(String uuid);
 }

@@ -32,6 +32,10 @@ public class TaskDto{
         this.satisfactory = satisfactory;
     }
 
+    public TaskDto(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

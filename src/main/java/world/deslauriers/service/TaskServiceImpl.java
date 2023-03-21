@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public Flux<Task> getTasksFromPastWeek(String uuid){
+    public Flux<TaskDto> getTasksFromPastWeek(String uuid){
         return taskRepository.findTasksFromPastWeek(uuid);
     }
 

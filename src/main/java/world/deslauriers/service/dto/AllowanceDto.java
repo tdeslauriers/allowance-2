@@ -1,7 +1,6 @@
 package world.deslauriers.service.dto;
 
 import io.micronaut.core.annotation.NonNull;
-import io.micronaut.core.annotation.Nullable;
 import io.micronaut.serde.annotation.Serdeable;
 
 import javax.validation.constraints.Email;

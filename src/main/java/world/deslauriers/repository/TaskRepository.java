@@ -27,14 +27,13 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
               tt.archived,
               t.date,
               t.complete,
-              t.satisfactory,
-              t.tasktype_id
+              t.satisfactory
             FROM task t
                 LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
                 LEFT JOIN task_allowance ta ON t.id = ta.task_id
                 LEFT JOIN allowance a ON ta.allowance_id = a.id
             WHERE
-                a.user_uuid = :userUuid
+                a.user_uuid = :uuid
                 AND
                     (t.date >= NOW() - INTERVAL 24 HOUR
                     OR
@@ -43,28 +42,27 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
                     OR
                     (tt.cadence = 'Adhoc'
                         AND t.complete = FALSE))
-
             """)
-    Flux<TaskDto> findToDoList(String userUuid);
+    Flux<TaskDto> findToDoList(String uuid);
 
     @Query(value = """
             SELECT
-                t.id,
-                t.date,
-                t.complete,
-                t.satisfactory,
-                t.tasktype_id
+              t.id,
+              tt.name,
+              tt.cadence,
+              tt.category,
+              tt.archived,
+              t.date,
+              t.complete,
+              t.satisfactory
             FROM task t
                 LEFT JOIN tasktype tt ON t.tasktype_id = tt.id
                 LEFT JOIN task_allowance ta ON t.id = ta.task_id
                 LEFT JOIN allowance a ON ta.allowance_id = a.id
             WHERE
-                t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                a.user_uuid = :uuid
                 AND
-                    (tt.cadence = 'Daily'
-                        OR tt.cadence = 'Weekly')
-                AND
-                    a.user_uuid = :uuid        
+                    t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
             """)
-    Flux<Task> findTasksFromPastWeek(String uuid);
+    Flux<TaskDto> findTasksFromPastWeek(String uuid);
 }
