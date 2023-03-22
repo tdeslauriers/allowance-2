@@ -128,11 +128,13 @@ public class AllowanceServiceImpl implements AllowanceService{
 
                     var tt = objects.getT2()
                             .stream()
-                            .peek(taskDto -> {
-                                taskDto.setId(null);
-                                taskDto.setDate(null);
-                                taskDto.setComplete(null);
-                                taskDto.setSatisfactory(null);
+                            .map(taskDto -> {
+                                var t = new TaskDto();
+                                t.setName(taskDto.getName());
+                                t.setCadence(taskDto.getCadence());
+                                t.setCategory(taskDto.getCategory());
+                                t.setArchived(taskDto.getArchived());
+                                return t;
                             })
                             .collect(Collectors.toCollection(HashSet::new));
 

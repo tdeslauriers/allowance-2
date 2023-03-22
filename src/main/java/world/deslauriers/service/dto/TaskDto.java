@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.micronaut.serde.annotation.Serdeable;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Serdeable
 public class TaskDto{
@@ -32,8 +33,17 @@ public class TaskDto{
         this.satisfactory = satisfactory;
     }
 
-    public TaskDto(String name) {
-        this.name = name;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaskDto taskDto = (TaskDto) o;
+        return Objects.equals(getId(), taskDto.getId()) && Objects.equals(getName(), taskDto.getName()) && Objects.equals(getCadence(), taskDto.getCadence()) && Objects.equals(getCategory(), taskDto.getCategory()) && Objects.equals(getArchived(), taskDto.getArchived()) && Objects.equals(getDate(), taskDto.getDate()) && Objects.equals(getComplete(), taskDto.getComplete()) && Objects.equals(getSatisfactory(), taskDto.getSatisfactory());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getCadence(), getCategory(), getArchived(), getDate(), getComplete(), getSatisfactory());
     }
 
     public Long getId() {
