@@ -140,12 +140,12 @@ public class AllowanceServiceImpl implements AllowanceService{
 
                     return new MetricsDto(
                             objects.getT1().getUserUuid(),
-                            objects.getT1().getBalance(),
+                            Math.round(objects.getT1().getBalance() * 100.0)/100.0,
                             total,
                             totalCompleted,
-                            percentageComplete,
+                            (double) Math.round(percentageComplete),
                             totalSatisfactory,
-                            percentageSatisfactory,
+                            (double) Math.round(percentageSatisfactory),
                             tt
                     );
                 });
