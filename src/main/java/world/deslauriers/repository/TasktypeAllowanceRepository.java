@@ -1,5 +1,6 @@
 package world.deslauriers.repository;
 
+import io.micronaut.data.annotation.Join;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
@@ -14,4 +15,8 @@ public interface TasktypeAllowanceRepository extends ReactorCrudRepository<Taskt
     Mono<TasktypeAllowance> save(TasktypeAllowance tasktypeAllowance);
 
     Mono<TasktypeAllowance> findByTasktypeAndAllowance(Tasktype tasktype, Allowance allowance);
+
+    @Join(value="tasktype", type = Join.Type.LEFT_FETCH)
+    @Join(value = "allowance", type = Join.Type.LEFT_FETCH)
+    Mono<TasktypeAllowance> findByTasktypeIdAndAllowanceId(Long tasktypeId, Long allowanceId);
 }

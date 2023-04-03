@@ -8,8 +8,11 @@ import io.micronaut.security.rules.SecurityRule;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
+import world.deslauriers.service.TasktypeAllowanceService;
 import world.deslauriers.service.TasktypeService;
+import world.deslauriers.service.dto.RemoveTasktypeAllowanceCmd;
 
+import javax.validation.Valid;
 import java.net.URI;
 
 @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -17,9 +20,11 @@ import java.net.URI;
 public class TasktypeController {
 
     protected final TasktypeService tasktypeService;
+    protected final TasktypeAllowanceService tasktypeAllowanceService;
 
-    public TasktypeController(TasktypeService tasktypeService) {
+    public TasktypeController(TasktypeService tasktypeService, TasktypeAllowanceService tasktypeAllowanceService) {
         this.tasktypeService = tasktypeService;
+        this.tasktypeAllowanceService = tasktypeAllowanceService;
     }
 
     @Secured({"ALLOWANCE_ADMIN"})
@@ -27,12 +32,6 @@ public class TasktypeController {
     Flux<Tasktype> getAll(){
         return tasktypeService.getAllActive();
     }
-
-//    @Secured({"ALLOWANCE_ADMIN"})
-//    @Get("/{id}")
-//    Flux<Tasktype> getById(Long id){
-//        return tasktypeService.findDailyTasktypes(id);
-//    }
 
     @Secured({"ALLOWANCE_ADMIN"})
     @Get("/{id}")
@@ -58,6 +57,17 @@ public class TasktypeController {
                 .map(tasktype -> HttpResponse
                         .ok(tasktype)
                         .header(HttpHeaders.LOCATION, location(tasktype.getId()).getPath()));
+    }
+
+    // Deletes xref, technically updating tasktype record => Put
+    // request body needed.
+    @Secured({"ALLOWANCE_ADMIN"})
+    @Put("/remove/tasktype/allowance")
+    Mono<HttpResponse<?>> removeTasktypeAllowance(@Body @Valid RemoveTasktypeAllowanceCmd cmd){
+        return tasktypeAllowanceService.removeTasktypeAllowance(cmd)
+                .thenReturn(HttpResponse
+                        .noContent()
+                        .header(HttpHeaders.LOCATION, URI.create("/remove/tasktype/allowance").getPath()));
     }
 
     protected URI location(Long id){
