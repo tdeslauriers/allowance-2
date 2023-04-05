@@ -62,7 +62,10 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
             WHERE
                 a.user_uuid = :uuid
                 AND
-                    t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                    (t.date >= NOW() - INTERVAL 7 DAY - INTERVAL 6 HOUR
+                    OR 
+                    (tt.cadence = 'Adhoc'
+                        AND t.complete = FALSE))
             """)
     Flux<TaskDto> findTasksFromPastWeek(String uuid);
 }

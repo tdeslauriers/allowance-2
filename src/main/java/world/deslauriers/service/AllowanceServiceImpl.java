@@ -112,16 +112,22 @@ public class AllowanceServiceImpl implements AllowanceService{
                 .zipWith(taskService.getTasksFromPastWeek(uuid).collectList())
                 .map(objects -> {
                     // set up allowance metrics
-                    var total = objects.getT2().size();
+                    var total = objects.getT2()
+                            .stream()
+                            .filter(taskDto -> !taskDto.getCadence().equals("Adhoc"))
+                            .toList()
+                            .size();
                     var totalCompleted = objects.getT2()
                             .stream()
                             .filter(taskDto -> taskDto.getComplete().intValue() == 1) // byte to boolean
+                            .filter(taskDto -> !taskDto.getCadence().equals("Adhoc")) // Adhoc not tied to date (yet)
                             .toList()
                             .size();
                     var percentageComplete = totalCompleted > 0 ? ((double) totalCompleted / (double) total) * 100d : 0;
                     var totalSatisfactory = objects.getT2()
                             .stream()
                             .filter(taskDto -> taskDto.getSatisfactory().intValue() == 1) // byte to boolean
+                            .filter(taskDto -> !taskDto.getCadence().equals("Adhoc")) //// Adhoc not tied to date (yet)
                             .toList()
                             .size();
                     var percentageSatisfactory = totalSatisfactory > 0 ? ((double) totalSatisfactory / (double) total) * 100d : 0;
