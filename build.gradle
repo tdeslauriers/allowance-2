@@ -1,6 +1,6 @@
 plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("io.micronaut.application") version "3.7.0"
+    id("io.micronaut.application") version "$micronautPluginVersion"
     id("io.micronaut.test-resources") version "3.7.0"
 }
 
@@ -63,9 +63,7 @@ micronaut {
         incremental(true)
         annotations("world.deslauriers.*")
     }
-    testResources {
-        additionalModules.add("hibernate-reactive-mariadb")
-    }
+
 }
 
 test {
