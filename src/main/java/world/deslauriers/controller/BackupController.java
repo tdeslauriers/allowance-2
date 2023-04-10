@@ -20,8 +20,8 @@ public class BackupController {
         this.tasktypeService = tasktypeService;
     }
 
-    @Get
-    public Flux<TasktypeBackup> backup(){
-        return tasktypeService.backup();
-    }
+//    @Get
+//    public Flux<TasktypeBackup> backup(){
+//        return tasktypeService.backup();
+//    }
 }
