@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +21,8 @@ public class CryptoServiceTest {
 
         var secret = "No, I am your father.";
         var encrypted = cryptoService.encryptAes256Gcm(secret.getBytes(StandardCharsets.UTF_8), PW);
-        System.out.println(encrypted);
-        System.out.println(cryptoService.decryptAes256Gcm(encrypted, PW));
+        assertNotNull(encrypted);
+        assertEquals(cryptoService.decryptAes256Gcm(encrypted, PW), secret);
+
     }
 }
