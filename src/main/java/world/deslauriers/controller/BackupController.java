@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import world.deslauriers.service.BackupService;
-import world.deslauriers.service.dto.TasktypeBackup;
+import world.deslauriers.service.dto.*;
 
 @Secured({"COLD_STORAGE"})
 @Controller("/backup")
@@ -21,8 +21,22 @@ public class BackupController {
         this.backupService = backupService;
     }
 
-    @Get
-    public Flux<TasktypeBackup> backup(){
-        return backupService.getBackupTasktypes();
+    @Get("/allowances")
+    public Flux<BackupAllowance> backupAllowances(){
+        return backupService.getAllowanceBackup();
     }
+
+    @Get("/tasktypes")
+    public Flux<BackupTasktype> backupTasktypes() {
+        return backupService.getTasktypeBackup();
+    }
+
+    @Get("/tasks")
+    public Flux<BackupTask> backupTasks(){ return backupService.getTaskBackup(); }
+
+    @Get("/tasktypeAllowances")
+    public Flux<BackupTasktypeAllowance> backupTasktypeAllowance() { return backupService.getTasktypeAlowanceBackups(); }
+
+    @Get("/taskAllowances")
+    public Flux<BackupTaskAllowance> backupTaskAllowance() { return backupService.getTaskAlowanceBackups(); }
 }

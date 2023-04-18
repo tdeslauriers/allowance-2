@@ -32,6 +32,9 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
+    public Flux<Tasktype> getAll() { return tasktypeRepository.findAll(); }
+
+    @Override
     public Flux<Tasktype> getAllActive() {
         return tasktypeRepository.findByArchivedFalse().distinct();
     }
@@ -39,12 +42,6 @@ public class TasktypeServiceImpl implements TasktypeService {
     @Override
     public Mono<Tasktype> getById(Long id){
         return tasktypeRepository.findByIdAndArchivedFalse(id);
-    }
-
-
-    @Override
-    public Mono<Tasktype> findById(Long id){
-        return tasktypeRepository.findById(id);
     }
 
     // local date must be tormorrow for utc offset

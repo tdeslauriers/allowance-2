@@ -21,6 +21,8 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
+    public Flux<Task> getAll() { return taskRepository.findAll(); }
+    @Override
     public Mono<Task> updateComplete(CompleteQualityCmd cmd) {
         return taskRepository
                 .findById(cmd.taskId())
@@ -50,4 +52,5 @@ public class TaskServiceImpl implements TaskService{
     public Mono<Task> save(Task task) {
         return taskRepository.save(task);
     }
+
 }

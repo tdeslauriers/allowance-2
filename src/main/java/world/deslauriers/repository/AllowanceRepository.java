@@ -1,9 +1,11 @@
 package world.deslauriers.repository;
 
 import io.micronaut.data.annotation.Join;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.model.query.builder.sql.Dialect;
 import io.micronaut.data.r2dbc.annotation.R2dbcRepository;
 import io.micronaut.data.repository.reactive.ReactorCrudRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 
@@ -19,4 +21,11 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
     @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
     @Join(value = "tasktypeAllowances.tasktype", type = Join.Type.LEFT_FETCH)
     Mono<Allowance> findByUserUuid(String uuid);
+
+
+    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.tasktype", type = Join.Type.LEFT_FETCH)
+    @Join(value = "taskAllowances", type = Join.Type.LEFT_FETCH)
+    @Join(value = "taskAllowances.task", type = Join.Type.LEFT_FETCH)
+    Flux<Allowance> findAll();
 }

@@ -17,4 +17,6 @@ public interface TaskService {
     Flux<TaskDto> getTasksFromPastWeek(String uuid);
 
     Mono<Task> save(Task task);
+
+    Flux<Task> getAll();
 }

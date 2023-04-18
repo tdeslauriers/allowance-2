@@ -4,5 +4,5 @@ public interface CryptoService {
 
     String encryptAes256Gcm(byte[] plainText, String password) throws Exception;
 
-    String decryptAes256Gcm(String cipherText, String password) throws Exception;
+    byte[] decryptAes256Gcm(String cipherText, String password) throws Exception;
 }

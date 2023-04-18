@@ -49,7 +49,7 @@ public class CryptoServiceImpl implements CryptoService{
     }
 
     @Override
-    public String decryptAes256Gcm(String cipherText, String password) throws Exception {
+    public byte[] decryptAes256Gcm(String cipherText, String password) throws Exception {
 
         // decode base64
         byte[] decoded = Base64.getDecoder().decode(cipherText.getBytes(UTF_8));
@@ -71,9 +71,7 @@ public class CryptoServiceImpl implements CryptoService{
         var cipher = Cipher.getInstance(AES_256_GCM_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(AES_256_GCM_TAG_LENGTH, iv));
 
-        byte[] plainText = cipher.doFinal(encrypted);
-
-        return new String(plainText, UTF_8);
+        return cipher.doFinal(encrypted);
     }
 
     // gen salts and iv's
