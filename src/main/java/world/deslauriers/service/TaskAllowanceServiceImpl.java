@@ -1,6 +1,7 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.repository.TaskAllowanceRepository;
@@ -17,5 +18,10 @@ public class TaskAllowanceServiceImpl implements TaskAllowanceService{
     @Override
     public Mono<TaskAllowance> save(TaskAllowance taskAllowance) {
         return taskAllowanceRepository.save(taskAllowance);
+    }
+
+    @Override
+    public Flux<TaskAllowance> getAll() {
+        return taskAllowanceRepository.findAll();
     }
 }

@@ -9,15 +9,17 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
 
+import static io.micronaut.data.annotation.Join.Type.LEFT_FETCH;
+
 @R2dbcRepository(dialect = Dialect.MYSQL)
 public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long> {
 
-    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
-    @Join(value = "tasktypeAllowances.allowance", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances", type = LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.allowance", type = LEFT_FETCH)
     Flux<Tasktype> findByArchivedFalse();
 
-    @Join(value = "tasktypeAllowances", type = Join.Type.LEFT_FETCH)
-    @Join(value = "tasktypeAllowances.allowance", type = Join.Type.LEFT_FETCH)
+    @Join(value = "tasktypeAllowances", type = LEFT_FETCH)
+    @Join(value = "tasktypeAllowances.allowance", type = LEFT_FETCH)
     Mono<Tasktype> findByIdAndArchivedFalse(Long id);
 
     Mono<Tasktype> save(Tasktype tasktype);
@@ -40,4 +42,6 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
                     a.id = :allowanceId
             """)
     Flux<Tasktype> findDailyTasktypes(Long allowanceId);
+
+
 }

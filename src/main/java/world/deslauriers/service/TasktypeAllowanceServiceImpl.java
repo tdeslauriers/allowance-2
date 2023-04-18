@@ -3,6 +3,7 @@ package world.deslauriers.service;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 import world.deslauriers.domain.Tasktype;
@@ -44,5 +45,10 @@ public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
                     return Mono.empty();
                 }))
                 .then();
+    }
+
+    @Override
+    public Flux<TasktypeAllowance> getAll() {
+        return tasktypeAllowanceRepository.findAll();
     }
 }

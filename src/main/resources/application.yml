@@ -35,12 +35,16 @@ r2dbc:
       url: ${ALLOWANCE_R2DBC_URL}
       username: ${ALLOWANCE_JDBC_USER}
       password: ${ALLOWANCE_JDBC_PASSWORD}
+#      url: ${BACKUP_ALLOWANCE_R2DBC_URL} # backup
 datasources:
   default:
     dialect: MYSQL
     url: ${ALLOWANCE_JDBC_URL}
     username: ${ALLOWANCE_JDBC_USER}
     password: ${ALLOWANCE_JDBC_PASSWORD}
+#    url: ${BACKUP_ALLOWANCE_JDBC_URL} # pushes the flyway schema
+#    username: ${BACKUP_ALLOWANCE_JDBC_USER}
+#    password: ${BACKUP_ALLOWANCE_JDBC_PASSWORD}
 ---
 flyway:
   datasources:
@@ -56,3 +60,7 @@ allowance:
     credentials:
       username: ${ALLOWANCE_LOGIN_USERNAME} # login url is above in client stanza
       password: ${ALLOWANCE_LOGIN_PASSWORD}
+---
+backup:
+  encryption:
+    aes256GcmPassword: ${BACKUP_ALLOWANCE_AES_GCM_PASSWORD}
