@@ -1,14 +1,13 @@
 package world.deslauriers.service;
 
-import io.micronaut.context.annotation.Property;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import world.deslauriers.config.EncryptionConfiguration;
 import world.deslauriers.service.dto.*;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -17,9 +16,7 @@ public class BackupServiceImpl implements BackupService {
 
     private static final Logger log = LoggerFactory.getLogger(BackupServiceImpl.class);
 
-    @Property(name = "backup.encryption.aes256GcmPassword")
-    private String aes256GcmPassword;
-
+    private final EncryptionConfiguration encryptionConfiguration;
     private final AllowanceService allowanceService;
     private final TasktypeService tasktypeService;
     private final TaskService taskService;
@@ -27,7 +24,8 @@ public class BackupServiceImpl implements BackupService {
     private final TaskAllowanceService taskAllowanceService;
     private final CryptoService cryptoService;
 
-    public BackupServiceImpl(AllowanceService allowanceService, TasktypeService tasktypeService, TaskService taskService, TasktypeAllowanceService tasktypeAllowanceService, TaskAllowanceService taskAllowanceService, CryptoService cryptoService) {
+    public BackupServiceImpl(EncryptionConfiguration encryptionConfiguration, AllowanceService allowanceService, TasktypeService tasktypeService, TaskService taskService, TasktypeAllowanceService tasktypeAllowanceService, TaskAllowanceService taskAllowanceService, CryptoService cryptoService) {
+        this.encryptionConfiguration = encryptionConfiguration;
         this.allowanceService = allowanceService;
         this.tasktypeService = tasktypeService;
         this.taskService = taskService;
@@ -47,9 +45,9 @@ public class BackupServiceImpl implements BackupService {
                     var encryptedUuid = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(allowance.getId()), aes256GcmPassword);
-                        encryptedBalance = cryptoService.encryptAes256Gcm(toByteArray(allowance.getBalance()), aes256GcmPassword);
-                        encryptedUuid = cryptoService.encryptAes256Gcm(toByteArray(allowance.getUserUuid()), aes256GcmPassword);
+                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(allowance.getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedBalance = cryptoService.encryptAes256Gcm(toByteArray(allowance.getBalance()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedUuid = cryptoService.encryptAes256Gcm(toByteArray(allowance.getUserUuid()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e) {
                         log.error("Encryption service failed to encrypt allowance: {}", allowance);
                         throw new RuntimeException(e);
@@ -72,11 +70,11 @@ public class BackupServiceImpl implements BackupService {
                     var encryptedArchived = "";
 
                     try {
-                        encyptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getId()), aes256GcmPassword);
-                        encryptedName = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getName()), aes256GcmPassword);
-                        encryptedCadence = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCadence()), aes256GcmPassword);
-                        encryptedCategory = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCategory()), aes256GcmPassword);
-                        encryptedArchived = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getArchived()), aes256GcmPassword);
+                        encyptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedName = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getName()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedCadence = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCadence()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedCategory = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCategory()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedArchived = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getArchived()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
                         log.error("Encryption Service failed to encrypt tasktype: {}", tasktype);
                         throw new RuntimeException(e);
@@ -98,11 +96,11 @@ public class BackupServiceImpl implements BackupService {
                     var encryptedTasktypeId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(task.getId()), aes256GcmPassword);
-                        encryptedDate = cryptoService.encryptAes256Gcm(toByteArray(task.getDate().toLocalDate().toEpochDay()), aes256GcmPassword);
-                        encryptedComplete = cryptoService.encryptAes256Gcm(toByteArray(task.getComplete()), aes256GcmPassword);
-                        encryptedSatifactory = cryptoService.encryptAes256Gcm(toByteArray(task.getSatisfactory()), aes256GcmPassword);
-                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(task.getTasktype().getId()), aes256GcmPassword);
+                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(task.getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedDate = cryptoService.encryptAes256Gcm(toByteArray(task.getDate().toLocalDate().toEpochDay()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedComplete = cryptoService.encryptAes256Gcm(toByteArray(task.getComplete()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedSatifactory = cryptoService.encryptAes256Gcm(toByteArray(task.getSatisfactory()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(task.getTasktype().getId()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
                         log.error("Encryption Service failed to encrypt task: {}", task);
                         throw new RuntimeException(e);
@@ -122,9 +120,9 @@ public class BackupServiceImpl implements BackupService {
                     var encryptedAllowanceId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getId()), aes256GcmPassword);
-                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getTasktype().getId()), aes256GcmPassword);
-                        encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getAllowance().getId()), aes256GcmPassword);
+                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getTasktype().getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getAllowance().getId()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
                         log.error("Encryption service unable to encrypt TasktypeAllowance: {}", tasktypeAllowance);
                         throw new RuntimeException(e);
@@ -144,9 +142,9 @@ public class BackupServiceImpl implements BackupService {
                     var encryptedAllowanceId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getId()), aes256GcmPassword);
-                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getTask().getId()), aes256GcmPassword);
-                        encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getAllowance().getId()), aes256GcmPassword);
+                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getTask().getId()), encryptionConfiguration.getAes256GcmPassword());
+                        encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getAllowance().getId()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
                         log.error("Encryption service unable to encrypt TasktypeAllowance: {}", taskAllowance);
                         throw new RuntimeException(e);
