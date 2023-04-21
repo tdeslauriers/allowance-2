@@ -11,6 +11,8 @@ import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.repository.TasktypeAllowanceRepository;
 import world.deslauriers.service.dto.RemoveTasktypeAllowanceCmd;
 
+import java.time.LocalDateTime;
+
 @Singleton
 public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
 
@@ -48,7 +50,7 @@ public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
     }
 
     @Override
-    public Flux<TasktypeAllowance> getAll() {
-        return tasktypeAllowanceRepository.findAll();
+    public Flux<TasktypeAllowance> getAllChangesSinceBackup(LocalDateTime lastBackup) {
+        return tasktypeAllowanceRepository.findAllChangesSinceBackup(lastBackup);
     }
 }

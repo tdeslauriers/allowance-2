@@ -9,6 +9,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 
+import java.time.LocalDateTime;
+
 @R2dbcRepository(dialect = Dialect.MYSQL)
 public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Long> {
 
@@ -28,4 +30,14 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
     @Join(value = "taskAllowances", type = Join.Type.LEFT_FETCH)
     @Join(value = "taskAllowances.task", type = Join.Type.LEFT_FETCH)
     Flux<Allowance> findAll();
+
+    @Query("""
+            SELECT
+                a.id,
+                a.balance,
+                a.user_uuid
+            FROM allowance a
+            WHERE a.row_start > :lastBackup
+            """)
+    Flux<Allowance> findAllChangesSinceBackup(LocalDateTime lastBackup);
 }

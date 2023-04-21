@@ -10,6 +10,8 @@ import world.deslauriers.repository.TaskRepository;
 import world.deslauriers.service.dto.CompleteQualityCmd;
 import world.deslauriers.service.dto.TaskDto;
 
+import java.time.LocalDateTime;
+
 @Singleton
 public class TaskServiceImpl implements TaskService{
 
@@ -22,6 +24,12 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Flux<Task> getAll() { return taskRepository.findAll(); }
+
+    @Override
+    public Flux<Task> getAllChangesSinceBackup(LocalDateTime lastBackup) {
+        return taskRepository.findAllChangesSinceBackup(lastBackup);
+    }
+
     @Override
     public Mono<Task> updateComplete(CompleteQualityCmd cmd) {
         return taskRepository

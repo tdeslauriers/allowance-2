@@ -6,6 +6,8 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.repository.TaskAllowanceRepository;
 
+import java.time.LocalDateTime;
+
 @Singleton
 public class TaskAllowanceServiceImpl implements TaskAllowanceService{
 
@@ -21,7 +23,7 @@ public class TaskAllowanceServiceImpl implements TaskAllowanceService{
     }
 
     @Override
-    public Flux<TaskAllowance> getAll() {
-        return taskAllowanceRepository.findAll();
+    public Flux<TaskAllowance> getAllChangesSinceBackup(LocalDateTime lastBackup) {
+        return taskAllowanceRepository.findAllChangesSinceBackup(lastBackup);
     }
 }

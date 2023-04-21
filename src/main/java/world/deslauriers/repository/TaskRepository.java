@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
 import world.deslauriers.service.dto.TaskDto;
 
+import java.time.LocalDateTime;
+
 @R2dbcRepository(dialect = Dialect.MYSQL)
 public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
 
@@ -68,4 +70,12 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
                         AND t.complete = FALSE))
             """)
     Flux<TaskDto> findTasksFromPastWeek(String uuid);
+
+    @Query("""
+            SELECT
+                *
+            FROM task t
+            WHERE t.row_start > :lastBackup
+            """)
+    Flux<Task> findAllChangesSinceBackup(LocalDateTime lastBackup);
 }

@@ -5,6 +5,8 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 import world.deslauriers.service.dto.MetricsDto;
 
+import java.time.LocalDateTime;
+
 public interface AllowanceService {
     Flux<Allowance> findAll();
 
@@ -20,4 +22,5 @@ public interface AllowanceService {
 
     Mono<MetricsDto> getAllowanceMetrics(String uuid);
 
+    Flux<Allowance> getAllChangesSinceBackup(LocalDateTime lastBackup);
 }

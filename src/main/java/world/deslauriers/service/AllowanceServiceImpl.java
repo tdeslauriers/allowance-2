@@ -16,6 +16,7 @@ import world.deslauriers.service.dto.MetricsDto;
 import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -155,6 +156,11 @@ public class AllowanceServiceImpl implements AllowanceService{
                             tt
                     );
                 });
+    }
+
+    @Override
+    public Flux<Allowance> getAllChangesSinceBackup(LocalDateTime lastBackup) {
+        return allowanceRepository.findAllChangesSinceBackup(lastBackup);
     }
 
 }

@@ -9,6 +9,7 @@ import world.deslauriers.domain.*;
 import world.deslauriers.repository.TasktypeRepository;
 
 import javax.validation.ValidationException;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -32,7 +33,9 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
-    public Flux<Tasktype> getAll() { return tasktypeRepository.findAll(); }
+    public Flux<Tasktype> getAllChangesSinceBackup(LocalDateTime lastBackup) {
+        return tasktypeRepository.findAllChangesSinceBackup(lastBackup);
+    }
 
     @Override
     public Flux<Tasktype> getAllActive() {

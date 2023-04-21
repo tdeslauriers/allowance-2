@@ -21,22 +21,26 @@ public class BackupController {
         this.backupService = backupService;
     }
 
-    @Get("/allowances")
-    public Flux<BackupAllowance> backupAllowances(){
-        return backupService.getAllowanceBackup();
+    // endpoints take epoch time (unix seconds => Long)
+    // so that chiller service can request only records
+    // that have changed since last backup
+
+    @Get("/allowances/{epoch}")
+    public Flux<BackupAllowance> backupAllowances(Long epoch){
+        return backupService.getAllowanceBackup(epoch);
     }
 
-    @Get("/tasktypes")
-    public Flux<BackupTasktype> backupTasktypes() {
-        return backupService.getTasktypeBackup();
+    @Get("/tasktypes/{epoch}")
+    public Flux<BackupTasktype> backupTasktypes(Long epoch) {
+        return backupService.getTasktypeBackup(epoch);
     }
 
-    @Get("/tasks")
-    public Flux<BackupTask> backupTasks(){ return backupService.getTaskBackup(); }
+    @Get("/tasks/{epoch}")
+    public Flux<BackupTask> backupTasks(Long epoch){ return backupService.getTaskBackup(epoch); }
 
-    @Get("/tasktypeAllowances")
-    public Flux<BackupTasktypeAllowance> backupTasktypeAllowance() { return backupService.getTasktypeAlowanceBackups(); }
+    @Get("/tasktypeAllowances/{epoch}")
+    public Flux<BackupTasktypeAllowance> backupTasktypeAllowance(Long epoch) { return backupService.getTasktypeAlowanceBackups(epoch); }
 
-    @Get("/taskAllowances")
-    public Flux<BackupTaskAllowance> backupTaskAllowance() { return backupService.getTaskAlowanceBackups(); }
+    @Get("/taskAllowances/{epoch}")
+    public Flux<BackupTaskAllowance> backupTaskAllowance(Long epoch) { return backupService.getTaskAlowanceBackups(epoch); }
 }

@@ -22,6 +22,7 @@ import io.micronaut.runtime.Micronaut;
         @Env(name = "ALLOWANCE_JDBC_PASSWORD", secret = "allowance-mariadb", value = "mariadb-password"),
         @Env(name = "ALLOWANCE_LOGIN_PASSWORD", secret = "allowance-service-password", value = "login-password"),
         @Env(name = "JWT_GENERATOR_SIGNATURE_SECRET", secret = "jwt", value = "signature-pw"),
+        @Env(name = "BACKUP_ALLOWANCE_AES_GCM_PASSWORD", secret = "aes", value = "backup-allowance-gcm-pw"),
     }
 )
 @DockerBuild(group = "tdeslauriers", name = "allowance")

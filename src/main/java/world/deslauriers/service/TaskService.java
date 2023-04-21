@@ -6,6 +6,8 @@ import world.deslauriers.domain.Task;
 import world.deslauriers.service.dto.CompleteQualityCmd;
 import world.deslauriers.service.dto.TaskDto;
 
+import java.time.LocalDateTime;
+
 public interface TaskService {
 
     Mono<Task> updateComplete(CompleteQualityCmd cmd);
@@ -19,4 +21,6 @@ public interface TaskService {
     Mono<Task> save(Task task);
 
     Flux<Task> getAll();
+
+    Flux<Task> getAllChangesSinceBackup(LocalDateTime lastBackup);
 }

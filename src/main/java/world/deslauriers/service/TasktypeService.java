@@ -4,7 +4,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.domain.Tasktype;
-import world.deslauriers.service.dto.TaskDto;
+
+import java.time.LocalDateTime;
 
 public interface TasktypeService {
     Flux<Tasktype> getAllActive();
@@ -19,5 +20,5 @@ public interface TasktypeService {
 
     Flux<Tasktype> findDailyTasktypes(Long id);
 
-    Flux<Tasktype> getAll();
+    Flux<Tasktype> getAllChangesSinceBackup(LocalDateTime lastBackup);
 }

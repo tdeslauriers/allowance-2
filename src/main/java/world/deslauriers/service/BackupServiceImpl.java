@@ -4,13 +4,20 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import world.deslauriers.config.EncryptionConfiguration;
 import world.deslauriers.service.dto.*;
 
 import java.nio.ByteBuffer;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+// endpoints take epoch time (unix seconds => Long)
+// so that chiller service can request only records
+// that have changed since last backup
 @Singleton
 public class BackupServiceImpl implements BackupService {
 
@@ -35,17 +42,15 @@ public class BackupServiceImpl implements BackupService {
     }
 
     @Override
-    public Flux<BackupAllowance> getAllowanceBackup() {
-
-        return allowanceService.findAll()
+    public Flux<BackupAllowance> getAllowanceBackup(Long epoch) {
+        return allowanceService.getAllChangesSinceBackup(dateTimeFromEpoch(epoch))
+                .switchIfEmpty(Mono.defer(Mono::empty))
                 .map(allowance -> {
 
-                    var encryptedId = "";
                     var encryptedBalance = "";
                     var encryptedUuid = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(allowance.getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedBalance = cryptoService.encryptAes256Gcm(toByteArray(allowance.getBalance()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedUuid = cryptoService.encryptAes256Gcm(toByteArray(allowance.getUserUuid()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e) {
@@ -53,24 +58,22 @@ public class BackupServiceImpl implements BackupService {
                         throw new RuntimeException(e);
                     }
 
-                    return new BackupAllowance(encryptedId, encryptedBalance, encryptedUuid);
+                    return new BackupAllowance(allowance.getId(), encryptedBalance, encryptedUuid);
                 });
     }
 
     @Override
-    public Flux<BackupTasktype> getTasktypeBackup() {
-
-        return tasktypeService.getAll()
+    public Flux<BackupTasktype> getTasktypeBackup(Long epoch) {
+        return tasktypeService.getAllChangesSinceBackup(dateTimeFromEpoch(epoch))
+                .switchIfEmpty(Mono.defer(Mono::empty))
                 .map(tasktype -> {
 
-                    var encyptedId = "";
                     var encryptedName = "";
                     var encryptedCadence = "";
                     var encryptedCategory = "";
                     var encryptedArchived = "";
 
                     try {
-                        encyptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedName = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getName()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedCadence = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCadence()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedCategory = cryptoService.encryptAes256Gcm(toByteArray(tasktype.getCategory()), encryptionConfiguration.getAes256GcmPassword());
@@ -80,23 +83,22 @@ public class BackupServiceImpl implements BackupService {
                         throw new RuntimeException(e);
                     }
 
-                    return new BackupTasktype(encyptedId, encryptedName, encryptedCadence, encryptedCategory, encryptedArchived);
+                    return new BackupTasktype(tasktype.getId(), encryptedName, encryptedCadence, encryptedCategory, encryptedArchived);
                 });
     }
 
     @Override
-    public Flux<BackupTask> getTaskBackup(){
-        return taskService.getAll()
+    public Flux<BackupTask> getTaskBackup(Long epoch){
+        return taskService.getAllChangesSinceBackup(dateTimeFromEpoch(epoch))
+                .switchIfEmpty(Mono.defer(Mono::empty))
                 .map(task -> {
 
-                    var encryptedId = "";
                     var encryptedDate = "";
                     var encryptedComplete = "";
                     var encryptedSatifactory = "";
                     var encryptedTasktypeId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(task.getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedDate = cryptoService.encryptAes256Gcm(toByteArray(task.getDate().toLocalDate().toEpochDay()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedComplete = cryptoService.encryptAes256Gcm(toByteArray(task.getComplete()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedSatifactory = cryptoService.encryptAes256Gcm(toByteArray(task.getSatisfactory()), encryptionConfiguration.getAes256GcmPassword());
@@ -106,21 +108,19 @@ public class BackupServiceImpl implements BackupService {
                         throw new RuntimeException(e);
                     }
 
-                    return new BackupTask(encryptedId, encryptedDate, encryptedComplete, encryptedSatifactory, encryptedTasktypeId);
+                    return new BackupTask(task.getId(), encryptedDate, encryptedComplete, encryptedSatifactory, encryptedTasktypeId);
                 });
     }
 
     @Override
-    public Flux<BackupTasktypeAllowance> getTasktypeAlowanceBackups() {
-        return tasktypeAllowanceService.getAll()
+    public Flux<BackupTasktypeAllowance> getTasktypeAlowanceBackups(Long epoch) {
+        return tasktypeAllowanceService.getAllChangesSinceBackup(dateTimeFromEpoch(epoch))
+                .switchIfEmpty(Mono.defer(Mono::empty))
                 .map(tasktypeAllowance -> {
-
-                    var encryptedId = "";
                     var encryptedTasktypeId = "";
                     var encryptedAllowanceId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getTasktype().getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(tasktypeAllowance.getAllowance().getId()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
@@ -128,21 +128,20 @@ public class BackupServiceImpl implements BackupService {
                         throw new RuntimeException(e);
                     }
 
-                    return new BackupTasktypeAllowance(encryptedId, encryptedTasktypeId, encryptedAllowanceId);
+                    return new BackupTasktypeAllowance(tasktypeAllowance.getId(), encryptedTasktypeId, encryptedAllowanceId);
                 });
     }
 
     @Override
-    public Flux<BackupTaskAllowance> getTaskAlowanceBackups() {
-        return taskAllowanceService.getAll()
+    public Flux<BackupTaskAllowance> getTaskAlowanceBackups(Long epoch) {
+        return taskAllowanceService.getAllChangesSinceBackup(dateTimeFromEpoch(epoch))
+                .switchIfEmpty(Mono.defer(Mono::empty))
                 .map(taskAllowance -> {
 
-                    var encryptedId = "";
                     var encryptedTasktypeId = "";
                     var encryptedAllowanceId = "";
 
                     try {
-                        encryptedId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedTasktypeId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getTask().getId()), encryptionConfiguration.getAes256GcmPassword());
                         encryptedAllowanceId = cryptoService.encryptAes256Gcm(toByteArray(taskAllowance.getAllowance().getId()), encryptionConfiguration.getAes256GcmPassword());
                     } catch (Exception e){
@@ -150,7 +149,7 @@ public class BackupServiceImpl implements BackupService {
                         throw new RuntimeException(e);
                     }
 
-                    return new BackupTaskAllowance(encryptedId, encryptedTasktypeId, encryptedAllowanceId);
+                    return new BackupTaskAllowance(taskAllowance.getId(), encryptedTasktypeId, encryptedAllowanceId);
                 });
     }
 
@@ -171,5 +170,9 @@ public class BackupServiceImpl implements BackupService {
             log.error("No type conversion in toByteArray(T val) method.");
             return null;
         }
+    }
+
+    private LocalDateTime dateTimeFromEpoch(Long epoch){
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(epoch), ZoneId.systemDefault());
     }
 }

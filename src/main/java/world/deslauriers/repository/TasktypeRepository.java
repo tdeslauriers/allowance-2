@@ -9,6 +9,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
 
+import java.time.LocalDateTime;
+
 import static io.micronaut.data.annotation.Join.Type.LEFT_FETCH;
 
 @R2dbcRepository(dialect = Dialect.MYSQL)
@@ -43,5 +45,15 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
             """)
     Flux<Tasktype> findDailyTasktypes(Long allowanceId);
 
-
+    @Query("""
+            SELECT
+                tt.id,
+                tt.name,
+                tt.cadence,
+                tt.category,
+                tt.archived
+            FROM tasktype tt
+            WHERE tt.row_start > :lastBackup
+            """)
+    Flux<Tasktype> findAllChangesSinceBackup(LocalDateTime lastBackup);
 }
