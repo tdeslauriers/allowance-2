@@ -47,6 +47,8 @@ flyway:
   datasources:
     default:
       enabled: true
+      baseline-on-migrate: true
+---
 netty:
   default:
     allocator:

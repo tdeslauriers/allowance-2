@@ -9,7 +9,7 @@ CREATE TABLE allowance (
     balance DOUBLE,
     user_uuid VARCHAR(64),
     PRIMARY KEY(id)
-);
+) WITH SYSTEM VERSIONING;
 
 CREATE TABLE tasktype (
     id INT NOT NULL AUTO_INCREMENT,
@@ -18,17 +18,17 @@ CREATE TABLE tasktype (
     category VARCHAR(32),
     archived BOOLEAN NOT NULL,
     PRIMARY KEY(id)
-);
+) WITH SYSTEM VERSIONING;
 
 CREATE TABLE task (
     id INT NOT NULL AUTO_INCREMENT,
-    date DATE NOT NULL,
+    date DATETIME NOT NULL,
     complete BOOLEAN NOT NULL,
     satisfactory BOOLEAN NOT NULL,
     tasktype_id INT NOT NULL,
     PRIMARY KEY(id),
     CONSTRAINT fk_tasktype_task_id FOREIGN KEY (tasktype_id) REFERENCES tasktype (id)
-);
+) WITH SYSTEM VERSIONING;
 
 CREATE TABLE tasktype_allowance (
     id INT NOT NULL AUTO_INCREMENT,
@@ -37,7 +37,7 @@ CREATE TABLE tasktype_allowance (
     PRIMARY KEY(id),
     CONSTRAINT fk_tasktype_allowance_id FOREIGN KEY (tasktype_id) REFERENCES tasktype (id),
     CONSTRAINT fk_allowance_tasktype_id FOREIGN KEY (allowance_id) REFERENCES allowance (id)
-);
+) WITH SYSTEM VERSIONING;
 
 CREATE TABLE task_allowance (
     id INT NOT NULL AUTO_INCREMENT,
@@ -46,4 +46,4 @@ CREATE TABLE task_allowance (
     PRIMARY KEY(id),
     CONSTRAINT fk_task_allowance_id FOREIGN KEY (task_id) REFERENCES task (id),
     CONSTRAINT fk_allowance_task_id FOREIGN KEY (allowance_id) REFERENCES allowance (id)
-);
+) WITH SYSTEM VERSIONING;

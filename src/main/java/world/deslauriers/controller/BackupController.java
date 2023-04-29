@@ -38,9 +38,9 @@ public class BackupController {
     @Get("/tasks/{epoch}")
     public Flux<BackupTask> backupTasks(Long epoch){ return backupService.getTaskBackup(epoch); }
 
-    @Get("/tasktypeAllowances/{epoch}")
+    @Get("/tasktype_allowances/{epoch}")
     public Flux<BackupTasktypeAllowance> backupTasktypeAllowance(Long epoch) { return backupService.getTasktypeAlowanceBackups(epoch); }
 
-    @Get("/taskAllowances/{epoch}")
+    @Get("/task_allowances/{epoch}")
     public Flux<BackupTaskAllowance> backupTaskAllowance(Long epoch) { return backupService.getTaskAlowanceBackups(epoch); }
 }
