@@ -1,6 +1,7 @@
 package world.deslauriers.service;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import world.deslauriers.service.dto.*;
 
 // endpoints take epoch time (unix seconds => Long)
@@ -17,5 +18,5 @@ public interface BackupService {
 
     Flux<BackupTaskAllowance> getTaskAlowanceBackups(Long epoch);
 
-    Flux<DeleteRecordsDto> cleanupBackupRecords(Long epoch);
+    Mono<DeleteRecordsDto> cleanupBackupRecords(Long epoch);
 }

@@ -10,7 +10,6 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.domain.TasktypeAllowance;
-import world.deslauriers.service.dto.DeleteRecordsDto;
 
 import java.time.LocalDateTime;
 
@@ -36,11 +35,8 @@ public interface TasktypeAllowanceRepository extends ReactorCrudRepository<Taskt
     @Query("""
             SELECT
                 *
-            FROM tasktype_allowance tta
-            WHERE
-                tta.row_end < NOW()
-                AND
-                    tta.row_end > :lastBackup
+            FROM tasktype_allowance FOR SYSTEM_TIME AS OF TIMESTAMP :lastBackup tta
+            WHERE tta.row_end < NOW()
             """)
     Flux<TasktypeAllowance> findDeletedRecords(LocalDateTime lastBackup);
 }

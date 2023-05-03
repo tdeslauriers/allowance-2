@@ -2,16 +2,17 @@ package world.deslauriers.service.dto;
 
 import io.micronaut.serde.annotation.Serdeable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Serdeable
 public class DeleteRecordsDto {
 
-    private Set<Long> allowanceIds;
-    private Set<Long> tasktypeIds;
-    private Set<Long> taskIds;
-    private Set<Long> tasktypeAllowanceIds;
-    private Set<Long> taskAllowanceIds;
+    private Set<Long> allowanceIds = new HashSet<>();
+    private Set<Long> tasktypeIds = new HashSet<>();
+    private Set<Long> taskIds = new HashSet<>();
+    private Set<Long> tasktypeAllowanceIds = new HashSet<>();
+    private Set<Long> taskAllowanceIds = new HashSet<>();
 
     public DeleteRecordsDto() {
     }
@@ -62,5 +63,16 @@ public class DeleteRecordsDto {
 
     public void setTaskAllowanceIds(Set<Long> taskAllowanceIds) {
         this.taskAllowanceIds = taskAllowanceIds;
+    }
+
+    @Override
+    public String toString() {
+        return "DeleteRecordsDto{" +
+                "allowanceIds=" + allowanceIds +
+                ", tasktypeIds=" + tasktypeIds +
+                ", taskIds=" + taskIds +
+                ", tasktypeAllowanceIds=" + tasktypeAllowanceIds +
+                ", taskAllowanceIds=" + taskAllowanceIds +
+                '}';
     }
 }

@@ -45,7 +45,8 @@ public class TasktypeServiceImpl implements TasktypeService {
                  .map(tasktype -> {
                     cleanup.getTasktypeIds().add(tasktype.getId());
                     return cleanup;
-                });
+                })
+                 .switchIfEmpty(Flux.just(cleanup));
     }
 
     @Override

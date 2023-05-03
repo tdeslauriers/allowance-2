@@ -6,6 +6,7 @@ import io.micronaut.security.annotation.Secured;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import world.deslauriers.service.BackupService;
 import world.deslauriers.service.dto.*;
 
@@ -46,5 +47,7 @@ public class BackupController {
 
     // clean up from row_end
     @Get("/cleanup/{epoch}")
-    public Flux<DeleteRecordsDto> cleanupBackupRecords(Long epoch) { return backupService.cleanupBackupRecords(epoch); }
+    public Mono<DeleteRecordsDto> cleanupBackupRecords(Long epoch) {
+        System.out.println(epoch);
+        return backupService.cleanupBackupRecords(epoch); }
 }

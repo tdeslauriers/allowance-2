@@ -8,7 +8,6 @@ import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
-import world.deslauriers.service.dto.DeleteRecordsDto;
 import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDateTime;
@@ -83,11 +82,8 @@ public interface TaskRepository extends ReactorCrudRepository<Task, Long> {
     @Query("""
             SELECT
                 *
-            FROM task t
-            WHERE 
-                t.row_end < NOW()
-                AND 
-                    t.row_end > :lastBackup
+            FROM task FOR SYSTEM_TIME AS OF TIMESTAMP :lastBackup t
+            WHERE t.row_end < NOW()
             """)
     Flux<Task> findDeletedRecords(LocalDateTime lastBackup);
 }

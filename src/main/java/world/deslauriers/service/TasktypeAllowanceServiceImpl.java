@@ -60,8 +60,10 @@ public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
         return tasktypeAllowanceRepository
                 .findDeletedRecords(lastBackup)
                 .map(tasktypeAllowance -> {
+                    System.out.println("tta");
                     cleanup.getTasktypeAllowanceIds().add(tasktypeAllowance.getId());
                     return cleanup;
-                });
+                })
+                .switchIfEmpty(Flux.just(cleanup));
     }
 }

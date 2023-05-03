@@ -33,12 +33,14 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+
         return taskRepository
                 .findDeletedRecords(lastBackup)
                 .map(task -> {
-                    cleanup.getTasktypeIds().add(task.getId());
+                    cleanup.getTaskIds().add(task.getId());
                     return cleanup;
-                });
+                })
+                .switchIfEmpty(Flux.just(cleanup));
     }
 
     @Override

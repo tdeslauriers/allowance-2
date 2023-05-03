@@ -166,12 +166,13 @@ public class AllowanceServiceImpl implements AllowanceService{
 
     @Override
     public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
-
-        return allowanceRepository.findDeletedRecords(lastBackup)
+        return allowanceRepository
+                .findDeletedRecords(lastBackup)
                 .map(allowance -> {
                     cleanup.getAllowanceIds().add(allowance.getId());
                     return cleanup;
-                });
+                })
+                .switchIfEmpty(Flux.just(cleanup));
     }
 
 }

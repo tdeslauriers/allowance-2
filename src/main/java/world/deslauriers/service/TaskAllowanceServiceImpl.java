@@ -1,6 +1,8 @@
 package world.deslauriers.service;
 
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
@@ -11,6 +13,8 @@ import java.time.LocalDateTime;
 
 @Singleton
 public class TaskAllowanceServiceImpl implements TaskAllowanceService{
+
+    private static final Logger log = LoggerFactory.getLogger(TaskAllowanceServiceImpl.class);
 
     private final TaskAllowanceRepository taskAllowanceRepository;
 
@@ -35,6 +39,7 @@ public class TaskAllowanceServiceImpl implements TaskAllowanceService{
                 .map(taskAllowance -> {
                     cleanup.getTaskAllowanceIds().add(taskAllowance.getId());
                     return cleanup;
-                });
+                })
+                .switchIfEmpty(Flux.just(cleanup));
     }
 }
