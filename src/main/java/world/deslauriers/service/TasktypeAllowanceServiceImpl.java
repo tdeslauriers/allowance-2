@@ -9,6 +9,7 @@ import world.deslauriers.domain.Allowance;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.repository.TasktypeAllowanceRepository;
+import world.deslauriers.service.dto.DeleteRecordsDto;
 import world.deslauriers.service.dto.RemoveTasktypeAllowanceCmd;
 
 import java.time.LocalDateTime;
@@ -52,5 +53,15 @@ public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
     @Override
     public Flux<TasktypeAllowance> getAllChangesSinceBackup(LocalDateTime lastBackup) {
         return tasktypeAllowanceRepository.findAllChangesSinceBackup(lastBackup);
+    }
+
+    @Override
+    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+        return tasktypeAllowanceRepository
+                .findDeletedRecords(lastBackup)
+                .map(tasktypeAllowance -> {
+                    cleanup.getTasktypeAllowanceIds().add(tasktypeAllowance.getId());
+                    return cleanup;
+                });
     }
 }

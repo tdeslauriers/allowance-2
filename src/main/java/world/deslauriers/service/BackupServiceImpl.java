@@ -153,6 +153,17 @@ public class BackupServiceImpl implements BackupService {
                 });
     }
 
+    @Override
+    public Flux<DeleteRecordsDto> cleanupBackupRecords(Long epoch) {
+        var lastBackup = dateTimeFromEpoch(epoch);
+        var cleanup = new DeleteRecordsDto();
+        return allowanceService.getDeletedRecords(cleanup)
+                .flatMap(deleteRecordsDto -> tasktypeService.getDeletedRecords(lastBackup, cleanup))
+                .flatMap(deleteRecordsDto -> taskService.getDeletedRecords(lastBackup, cleanup))
+                .flatMap(deleteRecordsDto -> tasktypeAllowanceService.getDeletedRecords(lastBackup, cleanup))
+                .flatMap(deleteRecordsDto -> taskAllowanceService.getDeletedRecords(lastBackup, cleanup));
+    }
+
     // convert values from current type to byte-array
     private <T> byte[] toByteArray(T val){
 

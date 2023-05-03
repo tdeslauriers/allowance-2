@@ -40,4 +40,17 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
             WHERE a.row_start > :lastBackup
             """)
     Flux<Allowance> findAllChangesSinceBackup(LocalDateTime lastBackup);
+
+    @Query("""
+            "SELECT
+                a.id,
+                a.balance,
+                a.user_uuid
+            FROM allowance a
+            WHERE 
+                a.row_end < NOW()
+                AND
+                    a.row_end > :lastBackup
+            """)
+    Flux<Allowance> findDeletedRecords(LocalDateTime lastBackup);
 }

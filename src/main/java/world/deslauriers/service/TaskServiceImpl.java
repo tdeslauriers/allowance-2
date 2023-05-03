@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Task;
 import world.deslauriers.repository.TaskRepository;
 import world.deslauriers.service.dto.CompleteQualityCmd;
+import world.deslauriers.service.dto.DeleteRecordsDto;
 import world.deslauriers.service.dto.TaskDto;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,16 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public Flux<Task> getAllChangesSinceBackup(LocalDateTime lastBackup) {
         return taskRepository.findAllChangesSinceBackup(lastBackup);
+    }
+
+    @Override
+    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+        return taskRepository
+                .findDeletedRecords(lastBackup)
+                .map(task -> {
+                    cleanup.getTasktypeIds().add(task.getId());
+                    return cleanup;
+                });
     }
 
     @Override

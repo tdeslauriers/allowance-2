@@ -12,6 +12,7 @@ import world.deslauriers.domain.Allowance;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.repository.AllowanceRepository;
 import world.deslauriers.service.dto.AllowanceDto;
+import world.deslauriers.service.dto.DeleteRecordsDto;
 import world.deslauriers.service.dto.MetricsDto;
 import world.deslauriers.service.dto.TaskDto;
 
@@ -161,6 +162,16 @@ public class AllowanceServiceImpl implements AllowanceService{
     @Override
     public Flux<Allowance> getAllChangesSinceBackup(LocalDateTime lastBackup) {
         return allowanceRepository.findAllChangesSinceBackup(lastBackup);
+    }
+
+    @Override
+    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+
+        return allowanceRepository.findDeletedRecords(lastBackup)
+                .map(allowance -> {
+                    cleanup.getAllowanceIds().add(allowance.getId());
+                    return cleanup;
+                });
     }
 
 }

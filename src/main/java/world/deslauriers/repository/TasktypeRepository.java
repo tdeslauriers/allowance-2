@@ -8,6 +8,7 @@ import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Tasktype;
+import world.deslauriers.service.dto.DeleteRecordsDto;
 
 import java.time.LocalDateTime;
 
@@ -56,4 +57,19 @@ public interface TasktypeRepository extends ReactorCrudRepository<Tasktype, Long
             WHERE tt.row_start > :lastBackup
             """)
     Flux<Tasktype> findAllChangesSinceBackup(LocalDateTime lastBackup);
+
+    @Query("""
+            SELECT
+                tt.id,
+                tt.name,
+                tt.cadence,
+                tt.category,
+                tt.archived
+            FROM tasktype tt
+            WHERE
+                tt.row_end < NOW()
+                AND
+                    tt.row_end > :lastBackup
+            """)
+    Flux<Tasktype> findDeletedRecords(LocalDateTime lastBackup);
 }

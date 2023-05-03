@@ -43,4 +43,8 @@ public class BackupController {
 
     @Get("/task_allowances/{epoch}")
     public Flux<BackupTaskAllowance> backupTaskAllowance(Long epoch) { return backupService.getTaskAlowanceBackups(epoch); }
+
+    // clean up from row_end
+    @Get("/cleanup/{epoch}")
+    public Flux<DeleteRecordsDto> cleanupBackupRecords(Long epoch) { return backupService.cleanupBackupRecords(epoch); }
 }
