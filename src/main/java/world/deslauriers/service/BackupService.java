@@ -18,5 +18,5 @@ public interface BackupService {
 
     Flux<BackupTaskAllowance> getTaskAlowanceBackups(Long epoch);
 
-    Mono<DeleteRecordsDto> cleanupBackupRecords(Long epoch);
+    Mono<DeletedRecordsDto> cleanupBackupRecords(Long epoch);
 }

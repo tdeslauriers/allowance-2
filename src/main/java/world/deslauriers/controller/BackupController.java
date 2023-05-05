@@ -47,7 +47,7 @@ public class BackupController {
 
     // clean up from row_end
     @Get("/cleanup/{epoch}")
-    public Mono<DeleteRecordsDto> cleanupBackupRecords(Long epoch) {
+    public Mono<DeletedRecordsDto> cleanupBackupRecords(Long epoch) {
         System.out.println(epoch);
         return backupService.cleanupBackupRecords(epoch); }
 }

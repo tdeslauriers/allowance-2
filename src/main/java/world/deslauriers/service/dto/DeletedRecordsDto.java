@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Serdeable
-public class DeleteRecordsDto {
+public class DeletedRecordsDto {
 
     private Set<Long> allowanceIds = new HashSet<>();
     private Set<Long> tasktypeIds = new HashSet<>();
@@ -14,10 +14,10 @@ public class DeleteRecordsDto {
     private Set<Long> tasktypeAllowanceIds = new HashSet<>();
     private Set<Long> taskAllowanceIds = new HashSet<>();
 
-    public DeleteRecordsDto() {
+    public DeletedRecordsDto() {
     }
 
-    public DeleteRecordsDto(Set<Long> allowanceIds, Set<Long> tasktypeIds, Set<Long> taskIds, Set<Long> tasktypeAllowanceIds, Set<Long> taskAllowanceIds) {
+    public DeletedRecordsDto(Set<Long> allowanceIds, Set<Long> tasktypeIds, Set<Long> taskIds, Set<Long> tasktypeAllowanceIds, Set<Long> taskAllowanceIds) {
         this.allowanceIds = allowanceIds;
         this.tasktypeIds = tasktypeIds;
         this.taskIds = taskIds;

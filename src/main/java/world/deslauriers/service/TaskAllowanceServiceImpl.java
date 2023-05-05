@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.repository.TaskAllowanceRepository;
-import world.deslauriers.service.dto.DeleteRecordsDto;
+import world.deslauriers.service.dto.DeletedRecordsDto;
 
 import java.time.LocalDateTime;
 
@@ -33,11 +33,11 @@ public class TaskAllowanceServiceImpl implements TaskAllowanceService{
     }
 
     @Override
-    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+    public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
         return taskAllowanceRepository
                 .findDeletedRecords(lastBackup)
-                .map(taskAllowance -> {
-                    cleanup.getTaskAllowanceIds().add(taskAllowance.getId());
+                .map(deleted -> {
+                    cleanup.getTaskAllowanceIds().add(deleted.id());
                     return cleanup;
                 })
                 .switchIfEmpty(Flux.just(cleanup));

@@ -9,10 +9,9 @@ import reactor.core.publisher.Mono;
 import world.deslauriers.client.GatewayFetcher;
 import world.deslauriers.client.dto.LoginRequest;
 import world.deslauriers.domain.Allowance;
-import world.deslauriers.domain.Tasktype;
 import world.deslauriers.repository.AllowanceRepository;
 import world.deslauriers.service.dto.AllowanceDto;
-import world.deslauriers.service.dto.DeleteRecordsDto;
+import world.deslauriers.service.dto.DeletedRecordsDto;
 import world.deslauriers.service.dto.MetricsDto;
 import world.deslauriers.service.dto.TaskDto;
 
@@ -165,11 +164,11 @@ public class AllowanceServiceImpl implements AllowanceService{
     }
 
     @Override
-    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+    public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
         return allowanceRepository
                 .findDeletedRecords(lastBackup)
-                .map(allowance -> {
-                    cleanup.getAllowanceIds().add(allowance.getId());
+                .map(deleted -> {
+                    cleanup.getAllowanceIds().add(deleted.id());
                     return cleanup;
                 })
                 .switchIfEmpty(Flux.just(cleanup));

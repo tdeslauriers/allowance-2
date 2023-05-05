@@ -1,11 +1,10 @@
 package world.deslauriers.service;
 
-import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.TaskAllowance;
 import world.deslauriers.domain.Tasktype;
-import world.deslauriers.service.dto.DeleteRecordsDto;
+import world.deslauriers.service.dto.DeletedRecordsDto;
 
 import java.time.LocalDateTime;
 
@@ -24,5 +23,5 @@ public interface TasktypeService {
 
     Flux<Tasktype> getAllChangesSinceBackup(LocalDateTime lastBackup);
 
-    Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup);
+    Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup);
 }

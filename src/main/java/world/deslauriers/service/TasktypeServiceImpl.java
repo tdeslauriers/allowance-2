@@ -7,7 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.*;
 import world.deslauriers.repository.TasktypeRepository;
-import world.deslauriers.service.dto.DeleteRecordsDto;
+import world.deslauriers.service.dto.DeletedRecordsDto;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -39,11 +39,11 @@ public class TasktypeServiceImpl implements TasktypeService {
     }
 
     @Override
-    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+    public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
          return tasktypeRepository
                  .findDeletedRecords(lastBackup)
-                 .map(tasktype -> {
-                    cleanup.getTasktypeIds().add(tasktype.getId());
+                 .map(deleted -> {
+                    cleanup.getTasktypeIds().add(deleted.id());
                     return cleanup;
                 })
                  .switchIfEmpty(Flux.just(cleanup));

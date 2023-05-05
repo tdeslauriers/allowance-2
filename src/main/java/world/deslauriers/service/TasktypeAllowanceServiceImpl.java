@@ -9,7 +9,7 @@ import world.deslauriers.domain.Allowance;
 import world.deslauriers.domain.Tasktype;
 import world.deslauriers.domain.TasktypeAllowance;
 import world.deslauriers.repository.TasktypeAllowanceRepository;
-import world.deslauriers.service.dto.DeleteRecordsDto;
+import world.deslauriers.service.dto.DeletedRecordsDto;
 import world.deslauriers.service.dto.RemoveTasktypeAllowanceCmd;
 
 import java.time.LocalDateTime;
@@ -56,12 +56,12 @@ public class TasktypeAllowanceServiceImpl implements TasktypeAllowanceService{
     }
 
     @Override
-    public Flux<DeleteRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeleteRecordsDto cleanup) {
+    public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
         return tasktypeAllowanceRepository
                 .findDeletedRecords(lastBackup)
-                .map(tasktypeAllowance -> {
+                .map(deleted -> {
                     System.out.println("tta");
-                    cleanup.getTasktypeAllowanceIds().add(tasktypeAllowance.getId());
+                    cleanup.getTasktypeAllowanceIds().add(deleted.id());
                     return cleanup;
                 })
                 .switchIfEmpty(Flux.just(cleanup));

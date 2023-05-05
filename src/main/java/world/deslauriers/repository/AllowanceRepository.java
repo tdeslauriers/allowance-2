@@ -8,6 +8,7 @@ import io.micronaut.data.repository.reactive.ReactorCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import world.deslauriers.domain.Allowance;
+import world.deslauriers.service.dto.CleanupDto;
 
 import java.time.LocalDateTime;
 
@@ -44,10 +45,10 @@ public interface AllowanceRepository extends ReactorCrudRepository<Allowance, Lo
     @Query("""
             SELECT
                 a. id,
-                a.balance,
-                a.user_uuid
-            FROM allowance FOR SYSTEM_TIME AS OF TIMESTAMP :lastBackup a
-            WHERE a.row_end < NOW()
+                MAX(a.row_end) AS record_end
+            FROM allowance FOR SYSTEM_TIME ALL a
+            GROUP BY a.id
+            HAVING record_end < NOW()
             """)
-    Flux<Allowance> findDeletedRecords(LocalDateTime lastBackup);
+    Flux<CleanupDto> findDeletedRecords(LocalDateTime lastBackup);
 }

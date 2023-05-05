@@ -154,9 +154,9 @@ public class BackupServiceImpl implements BackupService {
     }
 
     @Override
-    public Mono<DeleteRecordsDto> cleanupBackupRecords(Long epoch) {
+    public Mono<DeletedRecordsDto> cleanupBackupRecords(Long epoch) {
         var lastBackup = dateTimeFromEpoch(epoch);
-        var cleanup = new DeleteRecordsDto();
+        var cleanup = new DeletedRecordsDto();
         return Mono.from(taskService.getDeletedRecords(lastBackup, cleanup)
                 .flatMap(deleteRecordsDto -> allowanceService.getDeletedRecords(lastBackup, deleteRecordsDto))
                 .flatMap(deleteRecordsDto -> tasktypeService.getDeletedRecords(lastBackup, deleteRecordsDto))
