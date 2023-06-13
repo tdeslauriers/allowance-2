@@ -26,4 +26,6 @@ public interface TaskService {
     Flux<Task> getAllChangesSinceBackup(LocalDateTime lastBackup);
 
     Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup);
+
+    Mono<Task> getById(long taskId);
 }

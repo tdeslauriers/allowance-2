@@ -26,4 +26,5 @@ public interface AllowanceService {
     Flux<Allowance> getAllChangesSinceBackup(LocalDateTime lastBackup);
 
     Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup);
+
 }

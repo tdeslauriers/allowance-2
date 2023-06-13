@@ -158,10 +158,10 @@ public class BackupServiceImpl implements BackupService {
         var lastBackup = dateTimeFromEpoch(epoch);
         var cleanup = new DeletedRecordsDto();
         return Mono.from(taskService.getDeletedRecords(lastBackup, cleanup)
+                .flatMap(deleteRecordsDto -> taskAllowanceService.getDeletedRecords(lastBackup, deleteRecordsDto))
                 .flatMap(deleteRecordsDto -> allowanceService.getDeletedRecords(lastBackup, deleteRecordsDto))
                 .flatMap(deleteRecordsDto -> tasktypeService.getDeletedRecords(lastBackup, deleteRecordsDto))
-                .flatMap(deleteRecordsDto -> tasktypeAllowanceService.getDeletedRecords(lastBackup, deleteRecordsDto))
-                .flatMap(deleteRecordsDto -> taskAllowanceService.getDeletedRecords(lastBackup, deleteRecordsDto)));
+                .flatMap(deleteRecordsDto -> tasktypeAllowanceService.getDeletedRecords(lastBackup, deleteRecordsDto)));
     }
 
     // convert values from current type to byte-array

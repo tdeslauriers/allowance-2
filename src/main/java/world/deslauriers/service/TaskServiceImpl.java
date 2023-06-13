@@ -44,6 +44,11 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
+    public Mono<Task> getById(long taskId) {
+        return taskRepository.findById(taskId);
+    }
+
+    @Override
     public Mono<Task> updateComplete(CompleteQualityCmd cmd) {
         return taskRepository
                 .findById(cmd.taskId())

@@ -2,7 +2,6 @@ package world.deslauriers.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import io.micronaut.data.annotation.Relation;
@@ -13,7 +12,6 @@ import io.micronaut.serde.annotation.Serdeable;
 public class TaskAllowance {
 
     @Id
-    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
 
     @Nullable
