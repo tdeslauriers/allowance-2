@@ -13,6 +13,7 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Singleton
 public class TasktypeServiceImpl implements TasktypeService {
@@ -42,11 +43,21 @@ public class TasktypeServiceImpl implements TasktypeService {
     public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
          return tasktypeRepository
                  .findDeletedRecords(lastBackup)
-                 .map(deleted -> {
+                 .flatMap(deleted -> {
                     cleanup.getTasktypeIds().add(deleted.id());
-                    return cleanup;
+                    return Mono.just(cleanup);
                 })
                  .switchIfEmpty(Flux.just(cleanup));
+    }
+
+    @Override
+    public Mono<Tasktype> getByIdAll(long id) {
+        return tasktypeRepository.findById(id);
+    }
+
+    @Override
+    public Mono<Tasktype> saveRestored(Tasktype tasktype) {
+        return tasktypeRepository.save(tasktype); // includes id
     }
 
     @Override
@@ -77,32 +88,28 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCadence(cmd.getCadence())) throw new ValidationException("Incorrect cadence provided.");
         if (!isValidCategory(cmd.getCategory())) throw new ValidationException("Incorrect category provided.");
 
-        return tasktypeRepository
-                .save(new Tasktype(cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
-                .map(tasktype -> {
-                    // creates a task for adhoc's since they don't have scheduled creation.
-                    if (tasktype.getCadence().toUpperCase().equals(Cadence.ADHOC.toString()) &&
-                            cmd.getTasktypeAllowances() != null &&
-                            cmd.getTasktypeAllowances().size() > 0){
-                        var t = new Task(OffsetDateTime.now(), false, false, tasktype);
-                        taskService.save(t)
-                                .map(task -> {
-                                    Flux.fromStream(cmd.getTasktypeAllowances().stream())
+        return tasktypeRepository.save(cmd)
+                .flatMap(tasktype -> {
+                    if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0){
+                        Flux.fromStream(cmd.getTasktypeAllowances().stream())
+                                .flatMap(tasktypeAllowance -> allowanceService.getByUuid(tasktypeAllowance.getAllowance().getUserUuid()))
+                                .flatMap(allowance -> {
+                                    if (tasktype.getCadence().toUpperCase().equals(Cadence.ADHOC.toString())){
+                                        return tasktypeAllowanceService.save(new TasktypeAllowance(tasktype, allowance))
                                                 .flatMap(tasktypeAllowance -> {
-                                                    return taskAllowanceService.save(new TaskAllowance(task, tasktypeAllowance.getAllowance()));
-                                                }).subscribe();
-                                    return task;
-                                }).subscribe();
+                                                    log.info("Saved new xref TasktypeAllowance({}, Tasktype id: {}, Allowance id: {}", tasktypeAllowance.getId(), tasktype.getId(), allowance.getId());
+                                                    return taskService.save(new Task(OffsetDateTime.now(), false, false, tasktype))
+                                                            .flatMap(task -> {
+                                                                log.info("Saved new adhoc Task id: {}", task.getId());
+                                                                return taskAllowanceService.save(new TaskAllowance(task, allowance));
+                                                            });
+                                                });
+                                    }
+                                    return tasktypeAllowanceService.save(new TasktypeAllowance(tasktype, allowance));
+                                })
+                                .subscribe();
                     }
-                    return tasktype;
-                })
-                .map(tasktype -> {
-                    cmd.setId(tasktype.getId());
-                    if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0) {
-                        assignTasktypes(cmd).subscribe();
-                    }
-                    // gross hack to return data to ui.
-                    return cmd;
+                    return Mono.just(tasktype);
                 });
     }
 
@@ -112,13 +119,14 @@ public class TasktypeServiceImpl implements TasktypeService {
         if (!isValidCadence(cmd.getCadence())) throw new ValidationException("Incorrect cadence provided.");
         if (!isValidCategory(cmd.getCategory())) throw new ValidationException("Incorrect category provided.");
 
-        return tasktypeRepository.update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
-                .map(tasktype -> {
+        return tasktypeRepository
+                .update(new Tasktype(cmd.getId(), cmd.getName(), cmd.getCadence(), cmd.getCategory(), cmd.getArchived()))
+                .flatMap(tasktype -> {
                     if (cmd.getTasktypeAllowances() != null && cmd.getTasktypeAllowances().size() > 0){
-                        assignTasktypes(cmd).subscribe();
+
                     }
                     // gross hack to return data
-                    return cmd;
+                    return Mono.just(cmd);
                 });
     }
 
@@ -146,13 +154,4 @@ public class TasktypeServiceImpl implements TasktypeService {
         }
         return false;
     }
-
-    private Flux<TasktypeAllowance> assignTasktypes(Tasktype cmd){
-
-       return Flux.fromStream(cmd.getTasktypeAllowances().stream()).flatMap(tasktypeAllowance -> tasktypeAllowanceService
-                   .findByTasktypeAndAllowance(cmd, tasktypeAllowance.getAllowance())
-                   .switchIfEmpty(tasktypeAllowanceService.save(new TasktypeAllowance(cmd, tasktypeAllowance.getAllowance()))));
-    }
-
-
 }

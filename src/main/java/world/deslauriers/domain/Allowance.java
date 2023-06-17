@@ -16,6 +16,7 @@ import java.util.Set;
 public class Allowance {
 
     @Id
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
     private Double balance;
     @NonNull

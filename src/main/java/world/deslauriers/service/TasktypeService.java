@@ -24,4 +24,8 @@ public interface TasktypeService {
     Flux<Tasktype> getAllChangesSinceBackup(LocalDateTime lastBackup);
 
     Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup);
+
+    Mono<Tasktype> getByIdAll(long id);
+
+    Mono<Tasktype> saveRestored(Tasktype tasktype);
 }

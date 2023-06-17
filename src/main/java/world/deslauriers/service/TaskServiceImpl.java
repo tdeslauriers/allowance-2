@@ -36,9 +36,9 @@ public class TaskServiceImpl implements TaskService{
 
         return taskRepository
                 .findDeletedRecords(lastBackup)
-                .map(deleted -> {
+                .flatMap(deleted -> {
                     cleanup.getTaskIds().add(deleted.id());
-                    return cleanup;
+                    return Mono.just(cleanup);
                 })
                 .switchIfEmpty(Flux.just(cleanup));
     }

@@ -16,6 +16,7 @@ import java.util.Set;
 public class Tasktype {
 
     @Id
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     private Long id;
 
     @NonNull

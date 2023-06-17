@@ -111,7 +111,7 @@ public class AllowanceServiceImpl implements AllowanceService{
     public Mono<MetricsDto> getAllowanceMetrics(String uuid){
         return getByUuid(uuid)
                 .zipWith(taskService.getTasksFromPastWeek(uuid).collectList())
-                .map(objects -> {
+                .flatMap(objects -> {
                     // set up allowance metrics
                     var total = objects.getT2()
                             .stream()
@@ -133,8 +133,7 @@ public class AllowanceServiceImpl implements AllowanceService{
                             .size();
                     var percentageSatisfactory = totalSatisfactory > 0 ? ((double) totalSatisfactory / (double) total) * 100d : 0;
 
-                    var tt = objects.getT2()
-                            .stream()
+                    var tt = objects.getT2().stream()
                             .map(taskDto -> {
                                 var t = new TaskDto();
                                 t.setName(taskDto.getName());
@@ -145,7 +144,7 @@ public class AllowanceServiceImpl implements AllowanceService{
                             })
                             .collect(Collectors.toCollection(HashSet::new));
 
-                    return new MetricsDto(
+                    return Mono.just(new MetricsDto(
                             objects.getT1().getUserUuid(),
                             Math.round(objects.getT1().getBalance() * 100.0)/100.0,
                             total,
@@ -154,7 +153,7 @@ public class AllowanceServiceImpl implements AllowanceService{
                             totalSatisfactory,
                             (double) Math.round(percentageSatisfactory),
                             tt
-                    );
+                    ));
                 });
     }
 
@@ -167,9 +166,9 @@ public class AllowanceServiceImpl implements AllowanceService{
     public Flux<DeletedRecordsDto> getDeletedRecords(LocalDateTime lastBackup, DeletedRecordsDto cleanup) {
         return allowanceRepository
                 .findDeletedRecords(lastBackup)
-                .map(deleted -> {
+                .flatMap(deleted -> {
                     cleanup.getAllowanceIds().add(deleted.id());
-                    return cleanup;
+                    return Mono.just(cleanup);
                 })
                 .switchIfEmpty(Flux.just(cleanup));
     }

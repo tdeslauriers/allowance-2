@@ -13,6 +13,7 @@ import java.util.Set;
 public class Task {
 
     @Id
+    @GeneratedValue(GeneratedValue.Type.IDENTITY)
     Long id;
     @JsonFormat(pattern="yyyy-MM-dd")
     @DateCreated

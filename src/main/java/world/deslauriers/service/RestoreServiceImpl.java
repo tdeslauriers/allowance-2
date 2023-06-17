@@ -10,6 +10,7 @@ import world.deslauriers.service.dto.*;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -78,7 +79,7 @@ public class RestoreServiceImpl implements RestoreService{
             log.error("Failed to decrypt tasktype id: {}", backupTasktype.id());
             throw new RuntimeException(e);
         }
-        return tasktypeService.save(new Tasktype(backupTasktype.id(), name, cadence, category, archived));
+        return tasktypeService.saveRestored(new Tasktype(backupTasktype.id(), name, cadence, category, archived));
     }
 
     @Override
@@ -91,8 +92,8 @@ public class RestoreServiceImpl implements RestoreService{
 
         try {
 
-            long epochSeconds = ByteBuffer.wrap(cryptoService.decryptAes256Gcm(backupTask.date(), encryptionConfiguration.getAes256GcmPassword())).getLong();
-            date = OffsetDateTime.of(LocalDateTime.ofEpochSecond(epochSeconds,0, ZoneOffset.UTC), ZoneOffset.UTC);
+            long epochDay = ByteBuffer.wrap(cryptoService.decryptAes256Gcm(backupTask.date(), encryptionConfiguration.getAes256GcmPassword())).getLong();
+            date = LocalDate.ofEpochDay(epochDay).atStartOfDay().atOffset(ZoneOffset.UTC);
 
             complete = convertToBool(cryptoService.decryptAes256Gcm(backupTask.complete(), encryptionConfiguration.getAes256GcmPassword()));
             satisfactory = convertToBool(cryptoService.decryptAes256Gcm(backupTask.satisfactory(), encryptionConfiguration.getAes256GcmPassword()));
@@ -103,7 +104,7 @@ public class RestoreServiceImpl implements RestoreService{
         }
 
         return tasktypeService
-                .getById(tasktypeId)
+                .getByIdAll(tasktypeId)
                 .switchIfEmpty(Mono.defer(() -> {
                     log.error("Unable to locate tasktype id {} when trying to map it to task id {}", tasktypeId, backupTask.id());
                     return Mono.empty();
